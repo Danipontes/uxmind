@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f11; --surface: #16161a; --surface2: #1e1e24; --border: #2a2a35;
+    --accent: #7c6af7; --accent2: #f7a26a; --accent3: #6af7c0; --accent4: #f76a8a;
+    --text: #e8e8f0; --muted: #7a7a9a; --green: #4ade80; --yellow: #facc15; --red: #f87171;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
+
+  /* ══════════════════ HEADER ══════════════════ */
+  header {
+    padding: 2rem 2rem 1.5rem;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+    width: 600px; height: 200px;
+    background: radial-gradient(ellipse, rgba(124,106,247,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  header h1 span { color: var(--accent); font-style: italic; }
+  header p.tagline { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; font-weight: 300; }
+  .header-meta {
+    margin-top: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    font-size: 0.88rem;
+  }
+  .meta-author { color: var(--accent3); font-weight: 500; }
+  .meta-sep { color: var(--border); }
+  .meta-inst { color: var(--muted); }
+
+  /* ══════════════════ PROGRESS BAR ══════════════════ */
+  .progress-bar-wrap {
+    padding: 0.75rem 2rem;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .progress-info {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .prog-fw {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+  }
+  .prog-fw-label { color: var(--muted); white-space: nowrap; }
+  .prog-mini-bar {
+    width: 80px;
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .prog-mini-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+  .prog-fw-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+  .prog-total {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.2rem;
+    min-width: 80px;
+  }
+  .prog-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 500;
+  }
+  .prog-global-bar {
+    width: 80px;
+    height: 5px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .prog-global-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent3));
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* ══════════════════ TABS ══════════════════ */
+  .tabs { display: flex; overflow-x: auto; padding: 1.25rem 2rem 0; border-bottom: 1px solid var(--border); scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab { padding: 0.65rem 1.25rem; cursor: pointer; font-size: 0.83rem; font-weight: 500; color: var(--muted); border-bottom: 2px solid transparent; transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 0.4rem; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--text); border-bottom-color: var(--accent); }
+  .tab-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); opacity: 0.5; }
+  .tab.active .tab-dot { opacity: 1; }
+
+  /* ══════════════════ MAIN ══════════════════ */
+  main { max-width: 960px; margin: 0 auto; padding: 2rem; }
+
+  .project-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 2rem; }
+  .project-field { display: flex; align-items: center; gap: 0.75rem; padding: 1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; transition: border-color 0.2s; }
+  .project-field:focus-within { border-color: var(--accent); }
+  .project-field label { color: var(--muted); font-size: 0.82rem; white-space: nowrap; flex-shrink: 0; }
+  .project-field input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-family: 'DM Mono', monospace; font-size: 0.88rem; }
+  .project-field input::placeholder { color: #3a3a55; }
+  .project-field input:disabled { opacity: 0.5; cursor: not-allowed; }
+  @media (max-width: 600px) { .project-bar { grid-template-columns: 1fr; } }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .framework-intro { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 2rem; display: flex; gap: 1.25rem; align-items: flex-start; }
+  .framework-intro .icon { font-size: 2rem; line-height: 1; flex-shrink: 0; }
+  .framework-intro h2 { font-family: 'DM Serif Display', serif; font-size: 1.4rem; margin-bottom: 0.25rem; }
+  .framework-intro p { color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+  .framework-intro .tag { display: inline-block; margin-top: 0.5rem; padding: 0.2rem 0.6rem; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 0.75rem; background: rgba(124,106,247,0.15); color: var(--accent); border: 1px solid rgba(124,106,247,0.3); }
+
+  .criterion { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; margin-bottom: 1rem; overflow: hidden; transition: border-color 0.2s; }
+  .criterion:hover { border-color: var(--accent); }
+  .criterion-header { padding: 1rem 1.25rem; cursor: pointer; display: flex; align-items: flex-start; gap: 1rem; }
+  .criterion-num { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--accent); background: rgba(124,106,247,0.1); padding: 0.2rem 0.5rem; border-radius: 4px; flex-shrink: 0; margin-top: 2px; }
+  .criterion-title { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+  .criterion-subtitle { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+  .criterion-right { margin-left: auto; display: flex; align-items: center; gap: 0.5rem; flex-shrink: 0; }
+  .criterion-score-preview { font-family: 'DM Mono', monospace; font-size: 0.75rem; padding: 0.15rem 0.45rem; border-radius: 4px; background: var(--surface2); color: var(--muted); }
+  .criterion-expand { color: var(--muted); font-size: 0.8rem; transition: transform 0.2s; }
+  .criterion.open .criterion-expand { transform: rotate(180deg); }
+  .criterion-body { display: none; padding: 0 1.25rem 1.25rem; border-top: 1px solid var(--border); }
+  .criterion.open .criterion-body { display: block; }
+
+  .rating-row { margin-top: 1rem; display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+  .rating-label { font-size: 0.82rem; color: var(--muted); }
+  .stars { display: flex; gap: 0.3rem; }
+  .star { width: 32px; height: 32px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-family: 'DM Mono', monospace; color: var(--muted); transition: all 0.15s; user-select: none; }
+  .star:hover { border-color: var(--accent); color: var(--accent); transform: scale(1.1); }
+  .star.sel-0 { background: var(--red); border-color: var(--red); color: white; }
+  .star.sel-1 { background: #f97316; border-color: #f97316; color: white; }
+  .star.sel-2 { background: var(--yellow); border-color: var(--yellow); color: #111; }
+  .star.sel-3 { background: #a3e635; border-color: #a3e635; color: #111; }
+  .star.sel-4 { background: var(--green); border-color: var(--green); color: #111; }
+  .na-btn { padding: 0.35rem 0.65rem; border-radius: 6px; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); font-size: 0.75rem; cursor: pointer; font-family: 'DM Mono', monospace; transition: all 0.15s; user-select: none; }
+  .na-btn.selected { background: var(--border); color: var(--text); }
+  .notes-area { margin-top: 0.75rem; width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 0.6rem 0.8rem; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; resize: vertical; min-height: 60px; outline: none; transition: border-color 0.2s; }
+  .notes-area:focus { border-color: var(--accent); }
+  .notes-area::placeholder { color: #3a3a55; }
+
+  .examples { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .example-pill { font-size: 0.78rem; padding: 0.2rem 0.6rem; border-radius: 20px; background: rgba(106,247,192,0.08); border: 1px solid rgba(106,247,192,0.2); color: var(--accent3); }
+  .bad-pill { background: rgba(247,106,138,0.08); border: 1px solid rgba(247,106,138,0.2); color: var(--accent4); }
+
+  .severity-legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1.5rem; padding: 1rem 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; font-size: 0.82rem; }
+  .severity-legend span { color: var(--muted); }
+  .sev-item { display: flex; align-items: center; gap: 0.4rem; }
+  .sev-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .score-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; text-align: center; }
+  .score-card .label { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.5rem; }
+  .score-card .value { font-family: 'DM Serif Display', serif; font-size: 2.5rem; line-height: 1; }
+  .score-card .sub { font-size: 0.78rem; color: var(--muted); margin-top: 0.25rem; }
+  .score-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 0.75rem; overflow: hidden; }
+  .score-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease; }
+
+  .report-section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+  .report-section h3 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+  .report-item { padding: 0.6rem 0; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; font-size: 0.88rem; }
+  .report-item:last-child { border-bottom: none; }
+  .report-item .name { color: var(--muted); }
+  .badge { padding: 0.15rem 0.5rem; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 0.75rem; white-space: nowrap; }
+  .badge-red { background: rgba(248,113,113,0.15); color: var(--red); }
+  .badge-yellow { background: rgba(250,204,21,0.15); color: var(--yellow); }
+  .badge-green { background: rgba(74,222,128,0.15); color: var(--green); }
+  .badge-gray { background: rgba(122,122,154,0.15); color: var(--muted); }
+
+  .info-box { padding: 0.75rem 1rem; background: rgba(124,106,247,0.08); border: 1px solid rgba(124,106,247,0.25); border-radius: 8px; font-size: 0.82rem; color: var(--muted); margin-bottom: 1.5rem; line-height: 1.6; }
+  .info-box strong { color: var(--accent); }
+
+  .btn-row { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .export-btn { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; transition: opacity 0.2s; }
+  .export-btn:hover { opacity: 0.85; }
+  .btn-csv { background: #22c55e; color: white; }
+  .btn-txt { background: var(--accent); color: white; }
+
+  .ref-box { background: var(--surface2); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1rem 1.25rem; margin: 1rem 0 1.25rem; }
+  .ref-box h4 { font-size: 0.82rem; font-weight: 600; color: var(--accent); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  .ref-box p { font-size: 0.82rem; color: var(--muted); line-height: 1.65; margin-bottom: 0.5rem; }
+  .ref-box p:last-child { margin-bottom: 0; }
+  .ref-cite { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: #5a5a7a; display: block; margin-top: 0.5rem; line-height: 1.5; }
+
+  /* ══════════════════ MODO TURMA ══════════════════ */
+  .class-mode-banner {
+    background: linear-gradient(135deg, rgba(124,106,247,0.15), rgba(106,247,192,0.08));
+    border: 1px solid rgba(124,106,247,0.4);
+    border-radius: 12px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .class-mode-banner .icon { font-size: 1.5rem; flex-shrink: 0; }
+  .class-mode-banner .info { flex: 1; min-width: 200px; }
+  .class-mode-banner .info strong { display: block; font-size: 0.9rem; color: var(--accent); }
+  .class-mode-banner .info span { font-size: 0.82rem; color: var(--muted); }
+  .class-mode-banner .site-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.82rem;
+    background: rgba(124,106,247,0.1);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    color: var(--accent);
+    border: 1px solid rgba(124,106,247,0.3);
+  }
+
+  /* Modal Modo Turma */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 560px;
+    position: relative;
+    animation: modalIn 0.2s ease;
+  }
+  @keyframes modalIn { from { opacity: 0; transform: scale(0.96) translateY(10px); } to { opacity: 1; transform: none; } }
+  .modal h2 { font-family: 'DM Serif Display', serif; font-size: 1.5rem; margin-bottom: 0.25rem; }
+  .modal .modal-sub { color: var(--muted); font-size: 0.85rem; margin-bottom: 1.5rem; }
+  .modal-close { position: absolute; top: 1rem; right: 1rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 0.3rem 0.6rem; cursor: pointer; color: var(--muted); font-size: 0.8rem; transition: all 0.15s; }
+  .modal-close:hover { color: var(--text); border-color: var(--accent); }
+  .modal-field { margin-bottom: 1rem; }
+  .modal-field label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.4rem; }
+  .modal-field input, .modal-field select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .modal-field input:focus, .modal-field select:focus { border-color: var(--accent); }
+  .modal-field input::placeholder { color: #3a3a55; }
+  .modal-btn-row { display: flex; gap: 0.75rem; margin-top: 1.5rem; }
+  .modal-btn { flex: 1; padding: 0.75rem; border: none; border-radius: 8px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 0.9rem; font-weight: 500; transition: opacity 0.2s; }
+  .modal-btn:hover { opacity: 0.85; }
+  .modal-btn-primary { background: var(--accent); color: white; }
+  .modal-btn-secondary { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+
+  /* Link gerado */
+  .link-box {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.65rem 0.9rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent3);
+    word-break: break-all;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .link-box:hover { border-color: var(--accent3); }
+  .copy-hint { font-size: 0.75rem; color: var(--muted); text-align: center; }
+
+  /* Barra de ação da turma (para professor) */
+  .class-action-bar {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 2rem;
+    background: rgba(124,106,247,0.06);
+    border-bottom: 1px solid rgba(124,106,247,0.2);
+    flex-wrap: wrap;
+  }
+  .class-action-bar.visible { display: flex; }
+  .class-action-bar span { font-size: 0.82rem; color: var(--muted); }
+  .cab-btn {
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .cab-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .cab-btn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+  .cab-btn.primary:hover { opacity: 0.85; }
+
+  /* Dashboard da turma */
+  .class-dashboard { padding: 0; }
+  .class-stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-bottom: 1.5rem; }
+  .cstat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
+  .cstat .cv { font-family: 'DM Serif Display', serif; font-size: 2rem; line-height: 1; color: var(--accent); }
+  .cstat .cl { font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+
+  .student-list { margin-bottom: 1.5rem; }
+  .student-row {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.15s;
+  }
+  .student-row:hover { border-color: var(--accent); }
+  .student-avatar {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent3));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: white;
+    flex-shrink: 0;
+  }
+  .student-info { flex: 1; min-width: 0; }
+  .student-email { font-size: 0.85rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .student-time { font-size: 0.75rem; color: var(--muted); }
+  .student-scores { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+  .student-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    background: var(--surface2);
+    color: var(--muted);
+  }
+
+  .class-heatmap { margin-bottom: 1.5rem; }
+  .class-heatmap h3 { font-family: 'DM Serif Display', serif; font-size: 1.1rem; margin-bottom: 1rem; }
+  .heatmap-fw { margin-bottom: 1rem; }
+  .heatmap-fw-label { font-size: 0.78rem; color: var(--muted); margin-bottom: 0.5rem; font-weight: 500; }
+  .heatmap-items { display: flex; flex-direction: column; gap: 0.3rem; }
+  .heatmap-item { display: flex; align-items: center; gap: 0.75rem; }
+  .heatmap-item-label { font-size: 0.75rem; color: var(--muted); width: 40px; flex-shrink: 0; font-family: 'DM Mono', monospace; }
+  .heatmap-item-title { font-size: 0.75rem; color: var(--muted); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .heatmap-bar-wrap { width: 120px; height: 8px; background: var(--border); border-radius: 4px; overflow: hidden; flex-shrink: 0; }
+  .heatmap-bar-fill { height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+  .heatmap-val { font-family: 'DM Mono', monospace; font-size: 0.72rem; color: var(--muted); width: 36px; flex-shrink: 0; text-align: right; }
+
+  .class-empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--muted);
+  }
+  .class-empty-state .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
+  .class-empty-state p { font-size: 0.9rem; }
+
+  /* Notificação toast */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.85rem;
+    z-index: 9999;
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    white-space: nowrap;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Botão modo turma no header */
+  .class-mode-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.75rem;
+    padding: 0.4rem 0.9rem;
+    background: rgba(124,106,247,0.12);
+    border: 1px solid rgba(124,106,247,0.35);
+    border-radius: 20px;
+    color: var(--accent);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .class-mode-btn:hover { background: rgba(124,106,247,0.22); }
+
+  /* Modo aluno — submit */
+  .submit-section {
+    background: linear-gradient(135deg, rgba(106,247,192,0.08), rgba(124,106,247,0.08));
+    border: 1px solid rgba(106,247,192,0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    text-align: center;
+  }
+  .submit-section h3 { font-family: 'DM Serif Display', serif; font-size: 1.2rem; margin-bottom: 0.5rem; }
+  .submit-section p { color: var(--muted); font-size: 0.85rem; margin-bottom: 1rem; }
+  .submit-btn {
+    padding: 0.85rem 2.5rem;
+    background: linear-gradient(135deg, var(--accent3), var(--accent));
+    border: none;
+    border-radius: 10px;
+    color: #0f0f11;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+  }
+  .submit-btn:hover { opacity: 0.9; transform: scale(1.02); }
+  .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .submit-success {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .submit-success .check { font-size: 3rem; }
+  .submit-success p { color: var(--muted); }
+
+  /* ══════════════════ ANÁLISE IA ══════════════════ */
+  .ai-analysis-section {
+    background: linear-gradient(135deg, rgba(124,106,247,0.07) 0%, rgba(106,247,192,0.05) 100%);
+    border: 1px solid rgba(124,106,247,0.3);
+    border-radius: 14px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-analysis-section::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 120px; height: 120px;
+    background: radial-gradient(ellipse, rgba(124,106,247,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .ai-analysis-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+  }
+  .ai-analysis-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem;
+  }
+  .ai-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(124,106,247,0.2);
+    border: 1px solid rgba(124,106,247,0.4);
+    border-radius: 4px;
+    color: var(--accent);
+    vertical-align: middle;
+  }
+  .ai-gen-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1.1rem;
+    background: linear-gradient(135deg, var(--accent), #9b8df5);
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    flex-shrink: 0;
+  }
+  .ai-gen-btn:hover { opacity: 0.88; transform: scale(1.02); }
+  .ai-gen-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .ai-loading {
+    display: none;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1.5rem 0;
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+  .ai-loading.show { display: flex; }
+  .ai-spinner {
+    width: 18px; height: 18px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .ai-result {
+    display: none;
+    font-size: 0.88rem;
+    line-height: 1.75;
+    color: var(--text);
+  }
+  .ai-result.show { display: block; }
+  .ai-result p { margin-bottom: 0.75rem; }
+  .ai-result p:last-child { margin-bottom: 0; }
+  .ai-result strong { color: var(--accent3); }
+  .ai-result em { color: var(--accent2); font-style: normal; font-weight: 500; }
+  .ai-result .ai-section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1rem;
+    color: var(--accent);
+    margin: 1rem 0 0.4rem;
+    display: block;
+  }
+  .ai-streaming-cursor {
+    display: inline-block;
+    width: 2px; height: 1em;
+    background: var(--accent);
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 0.8s step-end infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+  .ai-error {
+    display: none;
+    padding: 0.75rem 1rem;
+    background: rgba(248,113,113,0.08);
+    border: 1px solid rgba(248,113,113,0.25);
+    border-radius: 8px;
+    font-size: 0.82rem;
+    color: var(--red);
+  }
+  .ai-error.show { display: block; }
+
+  /* Footer */
+  footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; margin-top: 2rem; }
+  footer p { font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
+  footer .footer-disclaimer { margin-top: 0.75rem; font-size: 0.72rem; color: #5a5a7a; max-width: 700px; margin-left: auto; margin-right: auto; background: rgba(247,162,106,0.06); border: 1px solid rgba(247,162,106,0.2); border-radius: 8px; padding: 0.6rem 1rem; color: var(--accent2); }
+
+  /* Aluno - nome field */
+  .student-name-required {
+    background: rgba(247,162,106,0.08);
+    border: 1px solid rgba(247,162,106,0.25);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ HEADER ══════════════════ -->
+<header>
+  <h1>Avaliador <span>UX / IHC</span></h1>
+  <p class="tagline">Avaliação heurística científica · Nielsen · Bastien &amp; Scapin · WCAG 2.1 · Gestalt</p>
+  <div class="header-meta">
+    <span class="meta-author">👩‍🏫 Profa. Dra. Danielle Pompeu Noronha Pontes</span>
+    <span class="meta-sep">·</span>
+    <span class="meta-inst">Universidade do Estado do Amazonas — UEA · IHC</span>
+  </div>
+  <button class="class-mode-btn" onclick="openClassModal()" id="classModeBtnHeader">
+    🎓 Modo Turma
+  </button>
+</header>
+
+<!-- ══════════════════ BARRA DE PROGRESSO GLOBAL ══════════════════ -->
+<div class="progress-bar-wrap" id="progressWrap">
+  <div class="progress-info" id="progressInfo">
+    <div class="prog-fw">
+      <span class="prog-fw-label">🎯 Nielsen</span>
+      <div class="prog-mini-bar"><div class="prog-mini-fill" id="prog-nielsen" style="width:0%;background:#7c6af7"></div></div>
+      <span class="prog-fw-count" id="count-nielsen">0/10</span>
+    </div>
+    <div class="prog-fw">
+      <span class="prog-fw-label">🔬 Bastien</span>
+      <div class="prog-mini-bar"><div class="prog-mini-fill" id="prog-bastien" style="width:0%;background:#f7a26a"></div></div>
+      <span class="prog-fw-count" id="count-bastien">0/18</span>
+    </div>
+    <div class="prog-fw">
+      <span class="prog-fw-label">♿ WCAG</span>
+      <div class="prog-mini-bar"><div class="prog-mini-fill" id="prog-wcag" style="width:0%;background:#6af7c0"></div></div>
+      <span class="prog-fw-count" id="count-wcag">0/11</span>
+    </div>
+    <div class="prog-fw">
+      <span class="prog-fw-label">👁️ Gestalt</span>
+      <div class="prog-mini-bar"><div class="prog-mini-fill" id="prog-gestalt" style="width:0%;background:#f76a8a"></div></div>
+      <span class="prog-fw-count" id="count-gestalt">0/8</span>
+    </div>
+  </div>
+  <div class="prog-total">
+    <span class="prog-pct" id="progPct">0%</span>
+    <div class="prog-global-bar"><div class="prog-global-fill" id="progGlobal" style="width:0%"></div></div>
+  </div>
+</div>
+
+<!-- ══════════════════ BARRA DE AÇÕES DA TURMA (professor) ══════════════════ -->
+<div class="class-action-bar" id="classActionBar">
+  <span>🎓 <strong id="classSessionLabel">Sessão ativa</strong></span>
+  <button class="cab-btn primary" onclick="copyStudentLink()">🔗 Copiar link dos alunos</button>
+  <button class="cab-btn" onclick="showTab('class-dashboard', document.querySelector('.tab[data-tab=class-dashboard]'))">📊 Ver dashboard da turma</button>
+  <button class="cab-btn" onclick="closeClassSession()">✕ Encerrar sessão</button>
+</div>
+
+<!-- ══════════════════ TABS ══════════════════ -->
+<div class="tabs" id="tabsBar">
+  <div class="tab active" data-tab="nielsen" onclick="showTab('nielsen',this)"><div class="tab-dot"></div>🎯 Nielsen</div>
+  <div class="tab" data-tab="bastien" onclick="showTab('bastien',this)"><div class="tab-dot" style="background:var(--accent2)"></div>🔬 Bastien & Scapin</div>
+  <div class="tab" data-tab="wcag" onclick="showTab('wcag',this)"><div class="tab-dot" style="background:var(--accent3)"></div>♿ WCAG</div>
+  <div class="tab" data-tab="gestalt" onclick="showTab('gestalt',this)"><div class="tab-dot" style="background:var(--accent4)"></div>👁️ Gestalt</div>
+  <div class="tab" data-tab="dashboard" onclick="showTab('dashboard',this)"><div class="tab-dot" style="background:#facc15"></div>📊 Resultado</div>
+  <div class="tab tab-class-only" data-tab="class-dashboard" onclick="showTab('class-dashboard',this)" style="display:none;"><div class="tab-dot" style="background:var(--accent3)"></div>🎓 Turma</div>
+</div>
+
+<!-- ══════════════════ MAIN ══════════════════ -->
+<main>
+
+  <!-- Campos do avaliador -->
+  <div class="project-bar" id="projectBar">
+    <div class="project-field">
+      <label>✉️ E-mail:</label>
+      <input type="email" id="evaluatorEmail" placeholder="seu@email.com" />
+    </div>
+    <div class="project-field">
+      <label>🌐 Site:</label>
+      <input type="text" id="projectName" placeholder="www.exemplo.com.br" />
+    </div>
+  </div>
+
+  <!-- ── NIELSEN ── -->
+  <div class="section active" id="section-nielsen">
+    <div class="framework-intro">
+      <div class="icon">🎯</div>
+      <div>
+        <h2>10 Heurísticas de Nielsen</h2>
+        <p>Criadas por Jakob Nielsen em 1994, são os princípios mais utilizados em avaliações heurísticas no mundo.</p>
+        <span class="tag">Nielsen Norman Group · 1994</span>
+      </div>
+    </div>
+    <div class="ref-box">
+      <h4>📚 Referencial Teórico</h4>
+      <p>A <strong>Avaliação Heurística</strong> é um método de inspeção de usabilidade proposto por Nielsen e Molich (1990) e consolidado por Nielsen (1994). Consiste em examinar a interface com base em princípios estabelecidos sem a participação direta de usuários finais.</p>
+      <span class="ref-cite">NIELSEN, J. Enhancing the explanatory power of usability heuristics. CHI, 1994.<br>NIELSEN, J.; MOLICH, R. Heuristic evaluation of user interfaces. CHI, 1990.</span>
+    </div>
+    <div class="severity-legend">
+      <span>Pontuação:</span>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--red)"></div>0 = Péssimo</div>
+      <div class="sev-item"><div class="sev-dot" style="background:#f97316"></div>1 = Ruim</div>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--yellow)"></div>2 = Regular</div>
+      <div class="sev-item"><div class="sev-dot" style="background:#a3e635"></div>3 = Bom</div>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--green)"></div>4 = Excelente</div>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--border)"></div>N/A = Não se aplica</div>
+    </div>
+    <div id="criteria-nielsen"></div>
+  </div>
+
+  <!-- ── BASTIEN ── -->
+  <div class="section" id="section-bastien">
+    <div class="framework-intro">
+      <div class="icon">🔬</div>
+      <div>
+        <h2>Critérios Ergonômicos de Bastien &amp; Scapin</h2>
+        <p>Desenvolvidos em 1993 pelo INRIA (França), estes 18 critérios oferecem análise granular da interface.</p>
+        <span class="tag">INRIA · Bastien &amp; Scapin · 1993</span>
+      </div>
+    </div>
+    <div class="ref-box">
+      <h4>📚 Referencial Teórico</h4>
+      <p>Os <strong>Critérios Ergonômicos</strong> de Bastien e Scapin foram desenvolvidos no INRIA como resultado de extensa revisão de literatura. Os 18 critérios estão organizados em 8 dimensões: Condução, Carga de Trabalho, Controle Explícito, Adaptabilidade, Gestão de Erros, Consistência, Significado dos Códigos e Compatibilidade.</p>
+      <span class="ref-cite">BASTIEN, J. M. C.; SCAPIN, D. L. Ergonomic criteria for the evaluation of human-computer interfaces. Technical Report INRIA nº 156, 1993.</span>
+    </div>
+    <div id="criteria-bastien"></div>
+  </div>
+
+  <!-- ── WCAG ── -->
+  <div class="section" id="section-wcag">
+    <div class="framework-intro">
+      <div class="icon">♿</div>
+      <div>
+        <h2>Diretrizes de Acessibilidade WCAG 2.1</h2>
+        <p>Padrão internacional do W3C: Perceptível, Operável, Compreensível e Robusto (POUR).</p>
+        <span class="tag">W3C · WCAG 2.1 · 2018</span>
+      </div>
+    </div>
+    <div class="ref-box">
+      <h4>📚 Referencial Teórico</h4>
+      <p>As <strong>WCAG</strong> são desenvolvidas pelo W3C/WAI. A versão 2.1 (2018) expande a anterior com critérios para dispositivos móveis, baixa visão e deficiências cognitivas. No Brasil, a acessibilidade digital é regulamentada pelo Decreto nº 5.296/2004 e pelo eMAG.</p>
+      <span class="ref-cite">W3C. WCAG 2.1. W3C Recommendation, 05 June 2018. https://www.w3.org/TR/WCAG21/</span>
+    </div>
+    <div id="criteria-wcag"></div>
+  </div>
+
+  <!-- ── GESTALT ── -->
+  <div class="section" id="section-gestalt">
+    <div class="framework-intro">
+      <div class="icon">👁️</div>
+      <div>
+        <h2>Princípios da Gestalt na Interface</h2>
+        <p>Leis da percepção visual da psicologia alemã. Explicam como o cérebro organiza elementos visuais.</p>
+        <span class="tag">Psicologia da Gestalt · Wertheimer · 1923</span>
+      </div>
+    </div>
+    <div class="ref-box">
+      <h4>📚 Referencial Teórico</h4>
+      <p>A <strong>Psicologia da Gestalt</strong> surgiu na Alemanha no início do século XX. Seu princípio: "o todo é diferente da soma das partes". Aplicada ao design, explica como usuários agrupam informações, identificam hierarquias e percebem relações entre elementos visuais.</p>
+      <span class="ref-cite">WERTHEIMER, M. Laws of organization in perceptual forms. In: ELLIS, W. D. (ed.). A source book of Gestalt psychology. Routledge, 1938.</span>
+    </div>
+    <div id="criteria-gestalt"></div>
+  </div>
+
+  <!-- ── RESULTADO INDIVIDUAL ── -->
+  <div class="section" id="section-dashboard">
+    <div class="framework-intro">
+      <div class="icon">📊</div>
+      <div>
+        <h2>Resultado da Avaliação</h2>
+        <p>Resumo consolidado com pontuações por framework e identificação dos pontos críticos.</p>
+      </div>
+    </div>
+    <div class="info-box">
+      <strong>💡 Exportar CSV:</strong> Gera uma linha com e-mail, site, data e todas as pontuações. Abra no Excel ou Google Sheets para comparar avaliações.
+    </div>
+    <div class="dashboard-grid" id="scorecards"></div>
+    <div id="report-body"></div>
+
+    <!-- Análise IA individual -->
+    <div class="ai-analysis-section" id="aiIndividualSection">
+      <div class="ai-analysis-header">
+        <div class="ai-analysis-title">
+          🤖 Análise Interpretativa <span class="ai-badge">Claude AI</span>
+        </div>
+        <button class="ai-gen-btn" id="aiIndividualBtn" onclick="generateIndividualAnalysis()">
+          ✨ Gerar análise
+        </button>
+      </div>
+      <div class="ai-loading" id="aiIndividualLoading">
+        <div class="ai-spinner"></div>
+        <span>Analisando os resultados da avaliação...</span>
+      </div>
+      <div class="ai-result" id="aiIndividualResult"></div>
+      <div class="ai-error" id="aiIndividualError"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="export-btn btn-csv" onclick="exportCSV()">📥 Exportar CSV</button>
+      <button class="export-btn btn-txt" onclick="exportTXT()">📄 Exportar .txt</button>
+    </div>
+  </div>
+
+  <!-- ── DASHBOARD DA TURMA ── -->
+  <div class="section" id="section-class-dashboard">
+    <div class="framework-intro">
+      <div class="icon">🎓</div>
+      <div>
+        <h2>Dashboard da Turma</h2>
+        <p>Visão consolidada das avaliações enviadas pelos alunos.</p>
+      </div>
+    </div>
+    <div class="class-dashboard" id="classDashboardContent">
+      <div class="class-empty-state">
+        <div class="icon">📭</div>
+        <p>Nenhuma avaliação enviada ainda.<br>Compartilhe o link com os alunos para começar.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer>
+  <p>
+    <strong>Avaliador UX/IHC</strong> · Instrumento pedagógico para avaliação heurística de interfaces<br>
+    Desenvolvido por <strong>Profa. Dra. Danielle Pompeu Noronha Pontes</strong> · Universidade do Estado do Amazonas — UEA · Disciplina de IHC
+  </p>
+  <p style="margin-top:0.5rem; font-size:0.72rem; color:#3a3a55;">
+    Nielsen (1994) · Bastien &amp; Scapin (1993) · W3C WCAG 2.1 (2018) · Wertheimer (1938)
+  </p>
+  <p class="footer-disclaimer">
+    🤖 <strong>Disclaimer IA:</strong> Esta ferramenta foi desenvolvida com o auxílio do modelo de linguagem Claude (Anthropic, 2025).
+    Os referenciais teóricos, critérios de avaliação e conteúdo científico foram revisados e validados pela autora.
+    O uso de IA generativa é declarado em conformidade com os princípios de transparência científica e integridade acadêmica.
+  </p>
+</footer>
+
+<!-- ══════════════════ MODAL MODO TURMA ══════════════════ -->
+<div class="modal-overlay" id="classModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeClassModal()">✕ Fechar</button>
+
+    <!-- Passo 1: configurar -->
+    <div id="classStep1">
+      <h2>🎓 Modo Turma</h2>
+      <p class="modal-sub">Configure uma sessão de avaliação para seus alunos.</p>
+
+      <div class="modal-field">
+        <label>🌐 Site a ser avaliado</label>
+        <input type="text" id="classSiteInput" placeholder="www.exemplo.com.br" />
+      </div>
+      <div class="modal-field">
+        <label>📝 Nome da turma / sessão</label>
+        <input type="text" id="classNameInput" placeholder="Ex: IHC 2025.1 — Grupo A" />
+      </div>
+
+      <div class="modal-btn-row">
+        <button class="modal-btn modal-btn-secondary" onclick="closeClassModal()">Cancelar</button>
+        <button class="modal-btn modal-btn-primary" onclick="createClassSession()">▶ Criar sessão e gerar link</button>
+      </div>
+    </div>
+
+    <!-- Passo 2: link gerado -->
+    <div id="classStep2" style="display:none;">
+      <h2>✅ Sessão criada!</h2>
+      <p class="modal-sub">Compartilhe o link abaixo com seus alunos. Eles abrirão a ferramenta já configurada para avaliação.</p>
+
+      <div class="modal-field">
+        <label>🔗 Link para os alunos (clique para copiar)</label>
+        <div class="link-box" id="generatedLink" onclick="copyGeneratedLink()"></div>
+        <p class="copy-hint" id="copyHint">👆 Clique no link para copiar</p>
+      </div>
+
+      <div class="modal-btn-row">
+        <button class="modal-btn modal-btn-secondary" onclick="closeClassModal()">Fechar</button>
+        <button class="modal-btn modal-btn-primary" onclick="openClassDashboard()">📊 Ver dashboard da turma</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ══════════════════ SCRIPT ══════════════════ -->
+<script>
+// ─── DADOS ────────────────────────────────────────────────────────────────────
+const DATA = {
+  nielsen: { color:'#7c6af7', items:[
+    {id:'n1',num:'H01',title:'Visibilidade do Status do Sistema',subtitle:'O sistema sempre informa os usuários sobre o que está acontecendo, com feedback adequado em tempo razoável.',good:['Barra de progresso ao fazer upload','Animação de carregamento visível','"Enviado com sucesso!" após formulário'],bad:['Botão sem nenhum retorno ao clicar','Formulário que some sem mensagem de confirmação']},
+    {id:'n2',num:'H02',title:'Correspondência entre Sistema e Mundo Real',subtitle:'O sistema usa linguagem familiar ao usuário — palavras e conceitos do mundo real, não jargão técnico.',good:['Ícone de lixeira para deletar','Linguagem em português claro'],bad:['"HTTP 403 Forbidden" como mensagem de erro','Siglas técnicas sem explicação']},
+    {id:'n3',num:'H03',title:'Controle e Liberdade do Usuário',subtitle:'Usuários precisam de saídas de emergência claramente marcadas. Suporte a desfazer e refazer.',good:['Botão "Cancelar" bem visível','Ctrl+Z funcional','Fechar modal com Esc'],bad:['Sem botão de voltar','Ação irreversível sem confirmação']},
+    {id:'n4',num:'H04',title:'Consistência e Padrões',subtitle:'Seguir convenções da plataforma. Mesma palavra deve sempre significar a mesma coisa.',good:['Botões com estilo consistente em todo o site','Mesmo vocabulário em todos os fluxos'],bad:['Botão "Salvar" às vezes verde, às vezes azul']},
+    {id:'n5',num:'H05',title:'Prevenção de Erros',subtitle:'Design cuidadoso que previne problemas antes que ocorram.',good:['Validação em tempo real no formulário','Confirmar antes de ação crítica'],bad:['Campo de data sem indicação do formato']},
+    {id:'n6',num:'H06',title:'Reconhecimento em Vez de Memorização',subtitle:'Minimizar a carga de memória do usuário. Objetos e ações devem estar visíveis.',good:['Menu sempre visível','Breadcrumb de navegação'],bad:['Atalhos de teclado sem indicação visual']},
+    {id:'n7',num:'H07',title:'Flexibilidade e Eficiência de Uso',subtitle:'Aceleradores para usuários experientes. Interface funciona para iniciantes e experts.',good:['Atalhos de teclado documentados','Filtros avançados'],bad:['Sem atalhos de teclado']},
+    {id:'n8',num:'H08',title:'Estética e Design Minimalista',subtitle:'Não incluir informação irrelevante. Cada elemento extra compete com os relevantes.',good:['Layout limpo com hierarquia clara','Sem pop-ups desnecessários'],bad:['Página cheia de banners','Informações não relacionadas misturadas']},
+    {id:'n9',num:'H09',title:'Ajuda ao Reconhecimento e Recuperação de Erros',subtitle:'Mensagens de erro em linguagem simples, que indicam o problema e sugerem solução.',good:['"E-mail inválido — use nome@dominio.com"','Campo com erro destacado em vermelho'],bad:['"Erro 500"','"Operação não permitida" sem contexto']},
+    {id:'n10',num:'H10',title:'Ajuda e Documentação',subtitle:'Embora melhor sem necessidade de ajuda, o sistema deve tê-la disponível e facilmente acessível.',good:['FAQ acessível em 1 clique','Tooltips em funções complexas'],bad:['Documentação inexistente ou difícil de encontrar']}
+  ]},
+  bastien: { color:'#f7a26a', items:[
+    {id:'b1',num:'B01',title:'Presteza',subtitle:'Fornecer informações suficientes para guiar o usuário em suas ações.',good:['Labels descritivos em todos os campos','Instruções antes de formulários complexos'],bad:['Campos sem label ou com label ambíguo']},
+    {id:'b2',num:'B02',title:'Agrupamento e Distinção por Localização',subtitle:'Itens relacionados próximos; itens distintos separados visualmente.',good:['Configurações agrupadas por categoria','Seções bem delimitadas'],bad:['Campos relacionados espalhados pela tela']},
+    {id:'b3',num:'B03',title:'Agrupamento e Distinção por Formato',subtitle:'Usar cores, formas e tipografia para distinguir categorias.',good:['Alertas em cores distintas','Ícones diferenciados por tipo'],bad:['Erros e avisos com visual idêntico']},
+    {id:'b4',num:'B04',title:'Feedback Imediato',subtitle:'O sistema responde rapidamente a toda ação do usuário.',good:['Confirmação visual ao salvar','Spinner visível durante operações'],bad:['Ação sem qualquer resposta visual']},
+    {id:'b5',num:'B05',title:'Legibilidade',subtitle:'Características visuais que afetam a leitura do texto na tela.',good:['Contraste adequado, fonte legível, espaçamento bom'],bad:['Texto cinza claro em fundo branco','Fonte muito pequena ou condensada']},
+    {id:'b6',num:'B06',title:'Concisão',subtitle:'Quantidade de informação apresentada de uma só vez, sem sobrecarregar.',good:['Formulários com etapas progressivas','Informações essenciais em primeiro lugar'],bad:['Tela com dezenas de campos de uma vez']},
+    {id:'b7',num:'B07',title:'Ações Mínimas',subtitle:'Limitar ao máximo o número de passos necessários para completar uma tarefa.',good:['Checkout em 1 página','Autopreenchimento de dados já conhecidos'],bad:['Registro obrigatório para comprar','Muitas telas para uma tarefa simples']},
+    {id:'b8',num:'B08',title:'Densidade Informacional',subtitle:'Carga cognitiva imposta pela densidade de informação na tela.',good:['Dashboards com informações prioritárias em destaque','Uso generoso de espaço em branco'],bad:['Tabelas com dezenas de colunas sem filtro','Interface sobrecarregada de dados']},
+    {id:'b9',num:'B09',title:'Ações Explícitas',subtitle:'O sistema só executa ações quando o usuário as solicita explicitamente.',good:['Formulário enviado apenas ao clicar em "Enviar"','Mudanças salvas só ao confirmar'],bad:['Dados salvos automaticamente sem aviso','Ação disparada ao mover o mouse']},
+    {id:'b10',num:'B10',title:'Controle do Usuário',subtitle:'O usuário controla o sistema — pode parar, pausar ou cancelar operações.',good:['Botão para cancelar downloads','Fechar modais com Esc'],bad:['Modal que não pode ser fechado','Redirecionamento automático sem opção de cancelar']},
+    {id:'b11',num:'B11',title:'Flexibilidade',subtitle:'Adaptação às diversas necessidades e preferências dos usuários.',good:['Modo claro e escuro disponíveis','Tamanho de fonte ajustável'],bad:['Sem nenhuma opção de personalização']},
+    {id:'b12',num:'B12',title:'Consideração da Experiência do Usuário',subtitle:'Levar em conta a diversidade de usuários — novatos e experientes.',good:['Onboarding para novos usuários','Modo básico e avançado separados'],bad:['Interface que assume expertise do usuário']},
+    {id:'b13',num:'B13',title:'Proteção contra Erros',subtitle:'Meios para evitar e recuperar de erros de entrada de dados.',good:['Validação antes do envio final','Undo disponível para ações importantes'],bad:['Deletar item sem confirmação']},
+    {id:'b14',num:'B14',title:'Qualidade das Mensagens de Erro',subtitle:'Mensagens precisas que indicam a natureza exata do erro.',good:['"Senha deve ter ao menos 8 caracteres com uma maiúscula"'],bad:['"Erro ao processar"','"Campo inválido" sem explicar como corrigir']},
+    {id:'b15',num:'B15',title:'Correção dos Erros',subtitle:'Meios para que o usuário corrija erros sem perder o trabalho já feito.',good:['Campo de erro já preenchido para editar e reenviar'],bad:['Formulário reseta completamente após erro']},
+    {id:'b16',num:'B16',title:'Consistência',subtitle:'Elementos idênticos têm comportamentos e aparência idênticos em todo o sistema.',good:['Todos os botões primários com mesmo estilo'],bad:['Datas em formatos diferentes em páginas distintas']},
+    {id:'b17',num:'B17',title:'Significados dos Códigos e Denominações',subtitle:'Codificações usadas são consistentes, significativas e claras.',good:['Verde = sucesso, vermelho = erro em todo o sistema'],bad:['Ícone sem texto de apoio']},
+    {id:'b18',num:'B18',title:'Compatibilidade',subtitle:'Adequação entre a organização do sistema e as características dos usuários.',good:['Formulário de endereço no padrão brasileiro'],bad:['Interface em inglês para público exclusivamente português']}
+  ]},
+  wcag: { color:'#6af7c0', items:[
+    {id:'w1',num:'P·1A',title:'Perceptível — Alternativas em Texto',subtitle:'Todo conteúdo não-texto tem alternativa em texto para leitores de tela.',good:['alt="Foto de produto: tênis azul"','Aria-label em botões que só têm ícone'],bad:['Tag img sem atributo alt']},
+    {id:'w2',num:'P·1B',title:'Perceptível — Contraste de Cores',subtitle:'Contraste mínimo de 4,5:1 para texto normal e 3:1 para texto grande.',good:['Texto #333 em fundo #FFF = 12.6:1'],bad:['Texto #999 em fundo #FFF = 2.8:1 (reprovado)']},
+    {id:'w3',num:'P·1C',title:'Perceptível — Redimensionamento de Texto',subtitle:'Texto ampliado até 200% sem perda de conteúdo.',good:['Site responsivo que adapta ao zoom do navegador'],bad:['Layout quebra ao aumentar fonte para 200%']},
+    {id:'w4',num:'O·2A',title:'Operável — Acessibilidade pelo Teclado',subtitle:'Toda funcionalidade disponível via teclado.',good:['Tab navega por todos os controles em ordem lógica'],bad:['Menu dropdown não acessível por teclado']},
+    {id:'w5',num:'O·2B',title:'Operável — Tempo Suficiente',subtitle:'Usuários têm tempo suficiente para ler e usar o conteúdo.',good:['Aviso antes do timeout com opção de estender'],bad:['Session timeout abrupto sem aviso']},
+    {id:'w6',num:'O·2C',title:'Operável — Convulsões e Reações Físicas',subtitle:'Não criar conteúdo que pisca mais de 3 vezes por segundo.',good:['Animações suaves sem flashes'],bad:['GIFs com efeito estroboscópico']},
+    {id:'w7',num:'O·2D',title:'Operável — Navegável',subtitle:'Mecanismos para ajudar usuários a navegar e localizar conteúdo.',good:['Link "Pular para o conteúdo principal"','Breadcrumbs em páginas internas'],bad:['Página sem tag title','Headings fora de ordem']},
+    {id:'w8',num:'C·3A',title:'Compreensível — Idioma da Página',subtitle:'O idioma principal da página está identificado no HTML.',good:['Atributo lang="pt-BR" na tag html'],bad:['Tag html sem atributo lang']},
+    {id:'w9',num:'C·3B',title:'Compreensível — Previsível',subtitle:'Páginas operam de forma previsível.',good:['Links com texto descritivo do destino'],bad:['"Clique aqui" sem contexto']},
+    {id:'w10',num:'C·3C',title:'Compreensível — Assistência na Entrada de Dados',subtitle:'Ajuda para evitar e corrigir erros em formulários.',good:['Labels permanentes visíveis acima do campo'],bad:['Placeholder usado como único label']},
+    {id:'w11',num:'R·4A',title:'Robusto — Compatível com Tecnologias Assistivas',subtitle:'Conteúdo interpretado corretamente por leitores de tela.',good:['HTML semântico válido','Testado em NVDA, VoiceOver'],bad:['Usar div com onclick no lugar de button']}
+  ]},
+  gestalt: { color:'#f76a8a', items:[
+    {id:'g1',num:'G01',title:'Proximidade',subtitle:'Elementos próximos são percebidos como relacionados.',good:['Label imediatamente acima do campo'],bad:['Label longe do campo ao qual pertence']},
+    {id:'g2',num:'G02',title:'Semelhança',subtitle:'Elementos com aparência similar são percebidos como do mesmo grupo.',good:['Todos os botões primários com mesmo estilo'],bad:['Botões com estilos iguais executando ações diferentes']},
+    {id:'g3',num:'G03',title:'Continuidade',subtitle:'O olho tende a seguir linhas e curvas suaves.',good:['Breadcrumb com seta → direcional','Progress bar horizontal'],bad:['Navegação que quebra o fluxo visual esperado']},
+    {id:'g4',num:'G04',title:'Fechamento (Closure)',subtitle:'A mente completa formas incompletas.',good:['Ícone de hambúrguer (≡) reconhecido como menu'],bad:['Ícones muito abstratos que não comunicam a função']},
+    {id:'g5',num:'G05',title:'Figura e Fundo',subtitle:'A mente separa elementos em "figura" (foco) e "fundo".',good:['Modal com overlay escuro semitransparente'],bad:['Imagem de fundo complexa que compete com o texto']},
+    {id:'g6',num:'G06',title:'Hierarquia Visual',subtitle:'Elementos importantes devem ser visivelmente distintos.',good:['H1 > H2 > H3 visivelmente distintos','CTA primário maior e mais colorido'],bad:['Todos os textos no mesmo tamanho']},
+    {id:'g7',num:'G07',title:'Região Comum',subtitle:'Elementos dentro de uma área delimitada são percebidos como pertencentes ao mesmo grupo.',good:['Card com sombra agrupando título, imagem e botão'],bad:['Conteúdo de grupos diferentes sem delimitação']},
+    {id:'g8',num:'G08',title:'Simetria e Ordem',subtitle:'A mente tende a perceber e preferir formas simétricas.',good:['Grid simétrico cria harmonia'],bad:['Desalinhamento acidental que parece erro']}
+  ]}
+};
+
+const TOTAL_ITEMS = Object.values(DATA).reduce((a,fw)=>a+fw.items.length,0);
+const ratings = {};
+
+// ─── MODO TURMA ───────────────────────────────────────────────────────────────
+let classSession = null; // { id, site, name, role: 'professor'|'student' }
+
+function initClassMode() {
+  const params = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session');
+  const role = params.get('role');
+
+  if (sessionId && role === 'student') {
+    // Modo aluno
+    classSession = { id: sessionId, role: 'student' };
+    // Carregar site do sessionStorage compartilhado
+    const sessionData = getSessionData(sessionId);
+    if (sessionData) {
+      classSession.site = sessionData.site;
+      classSession.name = sessionData.name;
+      setupStudentMode();
+    }
+  } else if (sessionId && role === 'professor') {
+    // Professor abrindo dashboard direto
+    classSession = { id: sessionId, role: 'professor' };
+    const sessionData = getSessionData(sessionId);
+    if (sessionData) {
+      classSession.site = sessionData.site;
+      classSession.name = sessionData.name;
+      setupProfessorMode();
+    }
+  }
+}
+
+function getSessionData(sessionId) {
+  try {
+    const key = `uxeval_session_${sessionId}`;
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e) { return null; }
+}
+
+function saveSessionData(sessionId, data) {
+  try {
+    localStorage.setItem(`uxeval_session_${sessionId}`, JSON.stringify(data));
+  } catch(e) {}
+}
+
+function getSessionSubmissions(sessionId) {
+  try {
+    const key = `uxeval_submissions_${sessionId}`;
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : [];
+  } catch(e) { return []; }
+}
+
+function saveSubmission(sessionId, submission) {
+  const subs = getSessionSubmissions(sessionId);
+  // Evitar duplicata do mesmo email
+  const idx = subs.findIndex(s => s.email === submission.email);
+  if (idx >= 0) subs[idx] = submission;
+  else subs.push(submission);
+  try {
+    localStorage.setItem(`uxeval_submissions_${sessionId}`, JSON.stringify(subs));
+  } catch(e) {}
+}
+
+function setupStudentMode() {
+  // Preencher campos e travar o site
+  const siteInput = document.getElementById('projectName');
+  siteInput.value = classSession.site || '';
+  siteInput.disabled = true;
+
+  // Esconder botão modo turma
+  document.getElementById('classModeBtnHeader').style.display = 'none';
+
+  // Mostrar banner do modo aluno
+  const banner = document.createElement('div');
+  banner.className = 'class-mode-banner';
+  banner.innerHTML = `
+    <div class="icon">🎓</div>
+    <div class="info">
+      <strong>Você está no Modo Aluno</strong>
+      <span>Sessão: ${classSession.name || classSession.id}</span>
+    </div>
+    <span class="site-label">🌐 ${classSession.site}</span>
+  `;
+
+  const main = document.querySelector('main');
+  main.insertBefore(banner, main.firstChild);
+
+  // Inserir aviso de nome obrigatório no projectBar
+  const pb = document.getElementById('projectBar');
+  const warn = document.createElement('div');
+  warn.className = 'student-name-required';
+  warn.style.gridColumn = '1/-1';
+  warn.innerHTML = '⚠️ Preencha seu <strong>e-mail institucional</strong> antes de enviar a avaliação.';
+  pb.parentNode.insertBefore(warn, pb);
+
+  // Adicionar seção de envio ao final
+  addSubmitSection();
+}
+
+function addSubmitSection() {
+  const main = document.querySelector('main');
+  const submitDiv = document.createElement('div');
+  submitDiv.className = 'submit-section';
+  submitDiv.id = 'submitSection';
+  submitDiv.innerHTML = `
+    <div id="submitForm">
+      <h3>📤 Enviar Avaliação</h3>
+      <p>Quando terminar todas as heurísticas, clique para enviar ao professor.</p>
+      <button class="submit-btn" onclick="submitStudentEvaluation()">Enviar Avaliação</button>
+    </div>
+    <div class="submit-success" id="submitSuccess">
+      <div class="check">✅</div>
+      <strong>Avaliação enviada com sucesso!</strong>
+      <p>O professor poderá ver sua avaliação no dashboard da turma.</p>
+    </div>
+  `;
+  main.appendChild(submitDiv);
+}
+
+function submitStudentEvaluation() {
+  const email = document.getElementById('evaluatorEmail').value.trim();
+  if (!email) {
+    showToast('⚠️ Preencha seu e-mail antes de enviar!');
+    return;
+  }
+
+  const submission = {
+    email,
+    sessionId: classSession.id,
+    timestamp: new Date().toISOString(),
+    ratings: JSON.parse(JSON.stringify(ratings))
+  };
+
+  saveSubmission(classSession.id, submission);
+
+  // UI feedback
+  document.getElementById('submitForm').style.display = 'none';
+  document.getElementById('submitSuccess').style.display = 'flex';
+  showToast('✅ Avaliação enviada!');
+}
+
+function setupProfessorMode() {
+  document.getElementById('classActionBar').classList.add('visible');
+  document.getElementById('classSessionLabel').textContent = `${classSession.name || classSession.id} · ${classSession.site}`;
+  document.querySelector('.tab[data-tab="class-dashboard"]').style.display = 'flex';
+
+  // Preencher site
+  const siteInput = document.getElementById('projectName');
+  if (!siteInput.value) siteInput.value = classSession.site || '';
+}
+
+function openClassModal() {
+  document.getElementById('classStep1').style.display = 'block';
+  document.getElementById('classStep2').style.display = 'none';
+  document.getElementById('classModal').classList.add('open');
+}
+
+function closeClassModal() {
+  document.getElementById('classModal').classList.remove('open');
+}
+
+function createClassSession() {
+  const site = document.getElementById('classSiteInput').value.trim();
+  const name = document.getElementById('classNameInput').value.trim();
+
+  if (!site) { showToast('⚠️ Informe o site a ser avaliado'); return; }
+
+  const sessionId = 'sess_' + Date.now().toString(36) + Math.random().toString(36).substr(2,5);
+
+  const sessionData = { id: sessionId, site, name, createdAt: new Date().toISOString() };
+  saveSessionData(sessionId, sessionData);
+
+  classSession = { id: sessionId, site, name, role: 'professor' };
+
+  // Gerar link de aluno
+  const base = window.location.href.split('?')[0];
+  const studentLink = `${base}?session=${sessionId}&role=student`;
+
+  document.getElementById('generatedLink').textContent = studentLink;
+  document.getElementById('classStep1').style.display = 'none';
+  document.getElementById('classStep2').style.display = 'block';
+
+  // Ativar barra do professor
+  setupProfessorMode();
+}
+
+function copyGeneratedLink() {
+  const link = document.getElementById('generatedLink').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    document.getElementById('copyHint').textContent = '✅ Copiado!';
+    setTimeout(() => { document.getElementById('copyHint').textContent = '👆 Clique no link para copiar'; }, 2000);
+    showToast('🔗 Link copiado!');
+  });
+}
+
+function copyStudentLink() {
+  if (!classSession) return;
+  const base = window.location.href.split('?')[0];
+  const studentLink = `${base}?session=${classSession.id}&role=student`;
+  navigator.clipboard.writeText(studentLink).then(() => showToast('🔗 Link copiado!'));
+}
+
+function closeClassSession() {
+  classSession = null;
+  document.getElementById('classActionBar').classList.remove('visible');
+  document.querySelector('.tab[data-tab="class-dashboard"]').style.display = 'none';
+  showToast('✓ Sessão encerrada');
+}
+
+function openClassDashboard() {
+  closeClassModal();
+  const tab = document.querySelector('.tab[data-tab="class-dashboard"]');
+  tab.style.display = 'flex';
+  showTab('class-dashboard', tab);
+}
+
+// ─── DASHBOARD DA TURMA ───────────────────────────────────────────────────────
+function buildClassDashboard() {
+  if (!classSession) return;
+  const container = document.getElementById('classDashboardContent');
+  const submissions = getSessionSubmissions(classSession.id);
+
+  if (submissions.length === 0) {
+    container.innerHTML = `
+      <div class="class-empty-state">
+        <div class="icon">📭</div>
+        <p>Nenhuma avaliação enviada ainda.<br>Compartilhe o link com os alunos para começar.</p>
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = '';
+
+  // ── Stats gerais ──
+  const statsGrid = document.createElement('div');
+  statsGrid.className = 'class-stats-grid';
+
+  // Calcular média geral de todas as submissões
+  let allAvgs = [];
+  submissions.forEach(sub => {
+    let sum = 0, cnt = 0;
+    Object.values(sub.ratings).forEach(r => {
+      if (!r.na && r.score !== null) { sum += r.score; cnt++; }
+    });
+    if (cnt > 0) allAvgs.push(sum / cnt);
+  });
+
+  const globalAvg = allAvgs.length > 0 ? allAvgs.reduce((a,b)=>a+b,0) / allAvgs.length : null;
+
+  statsGrid.innerHTML = `
+    <div class="cstat">
+      <div class="cv">${submissions.length}</div>
+      <div class="cl">Alunos que enviaram</div>
+    </div>
+    <div class="cstat">
+      <div class="cv" style="color:${globalAvg !== null ? scoreColor(globalAvg) : 'var(--muted)'}">
+        ${globalAvg !== null ? (globalAvg*25).toFixed(0)+'%' : '—'}
+      </div>
+      <div class="cl">Média geral da turma</div>
+    </div>
+    <div class="cstat">
+      <div class="cv" style="color:var(--accent3)">${globalAvg !== null ? globalAvg.toFixed(2) : '—'}</div>
+      <div class="cl">Score médio / 4,0</div>
+    </div>
+  `;
+  container.appendChild(statsGrid);
+
+  // ── Lista de alunos ──
+  const listSection = document.createElement('div');
+  listSection.className = 'report-section';
+  listSection.innerHTML = '<h3>👥 Avaliações Recebidas</h3>';
+
+  submissions.forEach(sub => {
+    const initials = sub.email.substring(0,2).toUpperCase();
+    let sum=0, cnt=0;
+    Object.values(sub.ratings).forEach(r => { if(!r.na && r.score!==null){sum+=r.score;cnt++;} });
+    const avg = cnt > 0 ? sum/cnt : null;
+
+    // Scores por framework
+    const fwScores = ['nielsen','bastien','wcag','gestalt'].map(fw => {
+      let s=0,c=0;
+      DATA[fw].items.forEach(item=>{
+        const r=sub.ratings[item.id];
+        if(r&&!r.na&&r.score!==null){s+=r.score;c++;}
+      });
+      return c>0 ? `<span class="student-badge" style="color:${DATA[fw].color}">${fw.substring(0,3).toUpperCase()} ${(s/c).toFixed(1)}</span>` : '';
+    }).join('');
+
+    const time = new Date(sub.timestamp).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    const date = new Date(sub.timestamp).toLocaleDateString('pt-BR');
+
+    const row = document.createElement('div');
+    row.className = 'student-row';
+    row.innerHTML = `
+      <div class="student-avatar">${initials}</div>
+      <div class="student-info">
+        <div class="student-email">${sub.email}</div>
+        <div class="student-time">Enviado em ${date} às ${time}</div>
+      </div>
+      <div class="student-scores">${fwScores}</div>
+      <span class="badge ${avg!==null ? (avg>=3?'badge-green':avg>=2?'badge-yellow':'badge-red') : 'badge-gray'}">
+        ${avg !== null ? (avg*25).toFixed(0)+'%' : 'N/A'}
+      </span>
+    `;
+    listSection.appendChild(row);
+  });
+  container.appendChild(listSection);
+
+  // ── Heatmap por critério ──
+  const heatSection = document.createElement('div');
+  heatSection.className = 'report-section class-heatmap';
+  heatSection.innerHTML = '<h3>🌡️ Média por Critério (todos os alunos)</h3>';
+
+  const fwNames = {nielsen:'🎯 Nielsen',bastien:'🔬 Bastien & Scapin',wcag:'♿ WCAG',gestalt:'👁️ Gestalt'};
+
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    const fwDiv = document.createElement('div');
+    fwDiv.className = 'heatmap-fw';
+    fwDiv.innerHTML = `<div class="heatmap-fw-label">${fwNames[fw]}</div><div class="heatmap-items" id="hmap-${fw}"></div>`;
+    heatSection.appendChild(fwDiv);
+
+    const itemsDiv = fwDiv.querySelector(`#hmap-${fw}`);
+    DATA[fw].items.forEach(item => {
+      let sum=0, cnt=0;
+      submissions.forEach(sub => {
+        const r = sub.ratings[item.id];
+        if(r && !r.na && r.score !== null) { sum+=r.score; cnt++; }
+      });
+      const avg = cnt > 0 ? sum/cnt : null;
+      const color = avg !== null ? scoreColor(avg) : 'var(--border)';
+      const pct = avg !== null ? (avg/4*100).toFixed(0) : 0;
+
+      const row = document.createElement('div');
+      row.className = 'heatmap-item';
+      row.innerHTML = `
+        <span class="heatmap-item-label">${item.num}</span>
+        <span class="heatmap-item-title" title="${item.title}">${item.title}</span>
+        <div class="heatmap-bar-wrap"><div class="heatmap-bar-fill" style="width:${pct}%;background:${color}"></div></div>
+        <span class="heatmap-val" style="color:${color}">${avg!==null?avg.toFixed(1):'—'}</span>
+      `;
+      itemsDiv.appendChild(row);
+    });
+  });
+  container.appendChild(heatSection);
+
+  // Botão exportar turma CSV
+  const btnDiv = document.createElement('div');
+  btnDiv.className = 'btn-row';
+  btnDiv.innerHTML = `
+    <button class="export-btn btn-csv" onclick="exportClassCSV()">📥 Exportar CSV da Turma</button>
+  `;
+
+  // Análise IA da turma
+  const aiDiv = document.createElement('div');
+  aiDiv.className = 'ai-analysis-section';
+  aiDiv.style.marginTop = '1.5rem';
+  aiDiv.innerHTML = `
+    <div class="ai-analysis-header">
+      <div class="ai-analysis-title">
+        🤖 Análise Interpretativa da Turma <span class="ai-badge">Claude AI</span>
+      </div>
+      <button class="ai-gen-btn" id="aiClassBtn" onclick="generateClassAnalysis()">
+        ✨ Gerar análise
+      </button>
+    </div>
+    <div class="ai-loading" id="aiClassLoading">
+      <div class="ai-spinner"></div>
+      <span>Analisando os resultados da turma...</span>
+    </div>
+    <div class="ai-result" id="aiClassResult"></div>
+    <div class="ai-error" id="aiClassError"></div>
+  `;
+  container.appendChild(aiDiv);
+  container.appendChild(btnDiv);
+}
+
+function exportClassCSV() {
+  if (!classSession) return;
+  const submissions = getSessionSubmissions(classSession.id);
+  if (submissions.length === 0) { showToast('Sem avaliações para exportar'); return; }
+
+  const allItems = [];
+  const headers = ['E-mail','Data','Hora'];
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    DATA[fw].items.forEach(item => {
+      headers.push(`${item.num} - ${item.title}`);
+      allItems.push(item);
+    });
+  });
+  headers.push('Média Nielsen','Média Bastien','Média WCAG','Média Gestalt','Média Geral');
+
+  const rows = [headers];
+  submissions.forEach(sub => {
+    const d = new Date(sub.timestamp);
+    const row = [sub.email, d.toLocaleDateString('pt-BR'), d.toLocaleTimeString('pt-BR')];
+    allItems.forEach(item => {
+      const r = sub.ratings[item.id];
+      row.push(r.na ? 'N/A' : r.score !== null ? r.score : '');
+    });
+    let gsum=0, gcnt=0;
+    ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+      let s=0,c=0;
+      DATA[fw].items.forEach(item=>{ const r=sub.ratings[item.id]; if(r&&!r.na&&r.score!==null){s+=r.score;c++;} });
+      row.push(c>0?(s/c).toFixed(2):'');
+      if(c>0){gsum+=s/c;gcnt++;}
+    });
+    row.push(gcnt>0?(gsum/gcnt).toFixed(2):'');
+    rows.push(row);
+  });
+
+  const esc = v => `"${String(v).replace(/"/g,'""')}"`;
+  const csv = rows.map(r => r.map(esc).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `turma_ux_${classSession.id}.csv`;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 200);
+}
+
+// ─── PROGRESSO ────────────────────────────────────────────────────────────────
+function updateProgress() {
+  let totalEval = 0;
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    const items = DATA[fw].items;
+    const total = items.length;
+    const evaluated = items.filter(item => {
+      const r = ratings[item.id];
+      return r && (r.score !== null || r.na);
+    }).length;
+    const pct = (evaluated/total*100).toFixed(0);
+
+    document.getElementById(`prog-${fw}`).style.width = pct + '%';
+    document.getElementById(`count-${fw}`).textContent = `${evaluated}/${total}`;
+    totalEval += evaluated;
+  });
+
+  const globalPct = (totalEval / TOTAL_ITEMS * 100).toFixed(0);
+  document.getElementById('progPct').textContent = globalPct + '%';
+  document.getElementById('progGlobal').style.width = globalPct + '%';
+}
+
+// ─── CRITÉRIOS ────────────────────────────────────────────────────────────────
+function buildCriteria(framework) {
+  const container = document.getElementById(`criteria-${framework}`);
+  const color = DATA[framework].color;
+  DATA[framework].items.forEach(item => {
+    ratings[item.id] = { score: null, na: false, notes: '' };
+    const div = document.createElement('div');
+    div.className = 'criterion';
+    div.id = `crit-${item.id}`;
+    const goodPills = item.good.map(g => `<span class="example-pill">✓ ${g}</span>`).join('');
+    const badPills  = item.bad.map(b  => `<span class="example-pill bad-pill">✗ ${b}</span>`).join('');
+    div.innerHTML = `
+      <div class="criterion-header" onclick="toggleCrit('${item.id}')">
+        <div class="criterion-num" style="color:${color};background:${color}22">${item.num}</div>
+        <div style="flex:1;min-width:0">
+          <div class="criterion-title">${item.title}</div>
+          <div class="criterion-subtitle">${item.subtitle}</div>
+        </div>
+        <div class="criterion-right">
+          <div class="criterion-score-preview" id="preview-${item.id}">—</div>
+          <div class="criterion-expand">▼</div>
+        </div>
+      </div>
+      <div class="criterion-body">
+        <div class="examples">${goodPills}${badPills}</div>
+        <div class="rating-row">
+          <span class="rating-label">Avalie:</span>
+          <div class="stars" id="stars-${item.id}">
+            ${[0,1,2,3,4].map(i=>`<div class="star" title="${['Péssimo','Ruim','Regular','Bom','Excelente'][i]}" onclick="setRating('${item.id}',${i})">${i}</div>`).join('')}
+          </div>
+          <div class="na-btn" id="na-${item.id}" onclick="setNA('${item.id}')">N/A</div>
+        </div>
+        <textarea class="notes-area" placeholder="Observações, problemas encontrados, evidências..." oninput="setNotes('${item.id}',this.value)"></textarea>
+      </div>`;
+    container.appendChild(div);
+  });
+}
+
+function toggleCrit(id) { document.getElementById(`crit-${id}`).classList.toggle('open'); }
+
+function updatePreview(id) {
+  const r = ratings[id], el = document.getElementById(`preview-${id}`);
+  if (r.na) { el.textContent='N/A'; el.style.color='var(--muted)'; return; }
+  if (r.score===null) { el.textContent='—'; el.style.color='var(--muted)'; return; }
+  const c=['var(--red)','#f97316','var(--yellow)','#a3e635','var(--green)'];
+  el.textContent = r.score+'/4'; el.style.color = c[r.score];
+}
+
+function setRating(id, score) {
+  ratings[id].score=score; ratings[id].na=false;
+  document.querySelectorAll(`#stars-${id} .star`).forEach((s,i)=>{ s.className='star'; if(i===score) s.classList.add(`sel-${score}`); });
+  document.getElementById(`na-${id}`).classList.remove('selected');
+  updatePreview(id);
+  updateProgress();
+}
+
+function setNA(id) {
+  ratings[id].score=null; ratings[id].na=true;
+  document.querySelectorAll(`#stars-${id} .star`).forEach(s=>s.className='star');
+  document.getElementById(`na-${id}`).classList.add('selected');
+  updatePreview(id);
+  updateProgress();
+}
+
+function setNotes(id,val) { ratings[id].notes=val; }
+
+function showTab(tab, el) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(`section-${tab}`).classList.add('active');
+  if (el) el.classList.add('active');
+  if (tab==='dashboard') buildDashboard();
+  if (tab==='class-dashboard') buildClassDashboard();
+}
+
+// ─── DASHBOARD INDIVIDUAL ─────────────────────────────────────────────────────
+function getFrameworkScore(fw) {
+  let sum=0, count=0;
+  DATA[fw].items.forEach(item => {
+    const r=ratings[item.id];
+    if(r && r.score!==null && !r.na){ sum+=r.score; count++; }
+  });
+  if(count===0) return null;
+  return { avg:sum/count, count, total:DATA[fw].items.length };
+}
+
+function scoreColor(avg) {
+  if(avg>=3.5) return 'var(--green)';
+  if(avg>=2.5) return '#a3e635';
+  if(avg>=1.5) return 'var(--yellow)';
+  if(avg>=0.5) return '#f97316';
+  return 'var(--red)';
+}
+
+function scoreBadge(score) {
+  if(score>=3.5) return ['badge-green','Excelente'];
+  if(score>=2.5) return ['badge-green','Bom'];
+  if(score>=1.5) return ['badge-yellow','Regular'];
+  if(score>=0.5) return ['badge-red','Ruim'];
+  return ['badge-red','Crítico'];
+}
+
+function buildDashboard() {
+  const names={nielsen:'🎯 Nielsen',bastien:'🔬 Bastien & Scapin',wcag:'♿ WCAG',gestalt:'👁️ Gestalt'};
+  const sc=document.getElementById('scorecards'); sc.innerHTML='';
+  let allSum=0, allCount=0;
+  const fwScores={};
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw=>{
+    const s=getFrameworkScore(fw); fwScores[fw]=s;
+    if(s){ allSum+=s.avg; allCount++; }
+  });
+  const overall=allCount>0 ? allSum/allCount : null;
+
+  const oc=document.createElement('div'); oc.className='score-card'; oc.style.gridColumn='1/-1';
+  oc.innerHTML=`<div class="label">Pontuação Geral</div>
+    <div class="value" style="color:${overall!==null?scoreColor(overall):'var(--muted)'}">
+      ${overall!==null?(overall*25).toFixed(0)+'%':'—'}</div>
+    <div class="sub">${overall!==null?overall.toFixed(2)+' / 4.0':'Nenhum critério avaliado ainda'}</div>
+    <div class="score-bar"><div class="score-bar-fill" style="width:${overall!==null?overall*25:0}%;background:${overall!==null?scoreColor(overall):'var(--border)'}"></div></div>`;
+  sc.appendChild(oc);
+
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw=>{
+    const s=fwScores[fw], card=document.createElement('div'); card.className='score-card';
+    card.innerHTML=`<div class="label">${names[fw]}</div>
+      <div class="value" style="color:${s?scoreColor(s.avg):'var(--muted)'}">
+        ${s?s.avg.toFixed(1):'—'}</div>
+      <div class="sub">${s?`${s.count} de ${s.total} avaliados`:'Não avaliado'}</div>
+      <div class="score-bar"><div class="score-bar-fill" style="width:${s?s.avg*25:0}%;background:${s?scoreColor(s.avg):'var(--border)'}"></div></div>`;
+    sc.appendChild(card);
+  });
+
+  const rb=document.getElementById('report-body'); rb.innerHTML='';
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw=>{
+    const sec=document.createElement('div'); sec.className='report-section';
+    sec.innerHTML=`<h3>${names[fw]}</h3>`;
+    DATA[fw].items.forEach(item=>{
+      const r=ratings[item.id];
+      let badge='';
+      if(r.na) badge=`<span class="badge badge-gray">N/A</span>`;
+      else if(r.score===null) badge=`<span class="badge badge-gray">Não avaliado</span>`;
+      else { const [cls,lbl]=scoreBadge(r.score); badge=`<span class="badge ${cls}">${r.score}/4 · ${lbl}</span>`; }
+      const noteHtml=r.notes?`<div style="font-size:0.78rem;color:var(--muted);margin-top:0.2rem;font-style:italic">"${r.notes}"</div>`:'';
+      sec.innerHTML+=`<div class="report-item">
+        <div style="flex:1;min-width:0;padding-right:0.5rem">
+          <span style="font-family:'DM Mono',monospace;font-size:0.75rem;color:var(--accent);margin-right:0.4rem">${item.num}</span>
+          <span class="name">${item.title}</span>${noteHtml}
+        </div>${badge}</div>`;
+    });
+    rb.appendChild(sec);
+  });
+}
+
+// ─── EXPORTS ──────────────────────────────────────────────────────────────────
+function exportCSV() {
+  const email=document.getElementById('evaluatorEmail').value||'';
+  const site=document.getElementById('projectName').value||'';
+  const date=new Date().toLocaleDateString('pt-BR');
+  const headers=['Data','E-mail Avaliador','Site Avaliado'];
+  const allItems=[];
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw=>{
+    DATA[fw].items.forEach(item=>{ headers.push(`${item.num} - ${item.title}`); headers.push(`${item.num} - Obs`); allItems.push(item); });
+  });
+  headers.push('Média Nielsen','Média Bastien','Média WCAG','Média Gestalt','Média Geral');
+  const row=[date,email,site];
+  allItems.forEach(item=>{ const r=ratings[item.id]; row.push(r.na?'N/A':r.score!==null?r.score:''); row.push(r.notes?r.notes.replace(/"/g,'""'):''); });
+  let allSum=0, allCount=0;
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw=>{ const s=getFrameworkScore(fw); row.push(s?s.avg.toFixed(2):''); if(s){allSum+=s.avg;allCount++;} });
+  row.push(allCount>0?(allSum/allCount).toFixed(2):'');
+  const esc=v=>`"${String(v).replace(/"/g,'""')}"`;
+  const csv=[headers.map(esc).join(','), row.map(esc).join(',')].join('\n');
+  const blob=new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'});
+  const url1=URL.createObjectURL(blob);
+  const a1=document.createElement('a'); a1.href=url1; a1.style.display='none';
+  a1.download=`avaliacao_ux_${(site||'sem_site').replace(/[^a-z0-9]/gi,'_')}_${date.replace(/\//g,'-')}.csv`;
+  document.body.appendChild(a1); a1.click();
+  setTimeout(()=>{ document.body.removeChild(a1); URL.revokeObjectURL(url1); },200);
+}
+
+function exportTXT() {
+  const email=document.getElementById('evaluatorEmail').value||'Não informado';
+  const site=document.getElementById('projectName').value||'Não informado';
+  const date=new Date().toLocaleDateString('pt-BR');
+  const fwNames={nielsen:'HEURÍSTICAS DE NIELSEN',bastien:'CRITÉRIOS DE BASTIEN & SCAPIN',wcag:'ACESSIBILIDADE (WCAG 2.1)',gestalt:'PRINCÍPIOS DA GESTALT'};
+  let txt=`RELATÓRIO DE AVALIAÇÃO UX/IHC\n${'='.repeat(50)}\n`;
+  txt+=`Avaliador : ${email}\nSite      : ${site}\nData      : ${date}\n${'='.repeat(50)}\n`;
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw=>{
+    txt+=`\n${fwNames[fw]}\n${'-'.repeat(40)}\n`;
+    DATA[fw].items.forEach(item=>{ const r=ratings[item.id]; const score=r.na?'N/A':r.score!==null?`${r.score}/4`:'Não avaliado'; txt+=`[${item.num}] ${item.title}: ${score}\n`; if(r.notes) txt+=`     Obs: ${r.notes}\n`; });
+  });
+  txt+=`\n${'='.repeat(50)}\nRESUMO DE PONTUAÇÕES\n${'-'.repeat(40)}\n`;
+  let allSum=0,allCount=0;
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw=>{ const s=getFrameworkScore(fw); txt+=`${fwNames[fw]}: ${s?s.avg.toFixed(2)+'/4.0':'Não avaliado'}\n`; if(s){allSum+=s.avg;allCount++;} });
+  txt+=`\nMÉDIA GERAL: ${allCount>0?(allSum/allCount).toFixed(2)+'/4.0 ('+(((allSum/allCount)*25).toFixed(0))+'%)':'Não avaliado'}\n`;
+  const blob=new Blob([txt],{type:'text/plain;charset=utf-8'});
+  const url2=URL.createObjectURL(blob);
+  const a2=document.createElement('a'); a2.href=url2; a2.style.display='none';
+  a2.download=`relatorio_ux_${(site||'sem_site').replace(/[^a-z0-9]/gi,'_')}.txt`;
+  document.body.appendChild(a2); a2.click();
+  setTimeout(()=>{ document.body.removeChild(a2); URL.revokeObjectURL(url2); },200);
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ─── ANÁLISE IA ───────────────────────────────────────────────────────────────
+// 👇 Substitua pela URL do seu proxy na Vercel após o deploy
+const PROXY_URL = 'COLE_AQUI_A_URL_DA_VERCEL';
+
+function buildIndividualPrompt() {
+  const site = document.getElementById('projectName').value || 'não informado';
+  const fwNames = {nielsen:'Heurísticas de Nielsen',bastien:'Critérios de Bastien & Scapin',wcag:'WCAG 2.1',gestalt:'Princípios da Gestalt'};
+  const labels = ['Péssimo','Ruim','Regular','Bom','Excelente'];
+
+  let prompt = `Você é um especialista em Usabilidade e IHC (Interação Humano-Computador). Analise os resultados desta avaliação heurística do site "${site}" e gere um relatório interpretativo em português.
+
+RESULTADOS DA AVALIAÇÃO:\n`;
+
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    let evaluated = 0, sum = 0;
+    const problems = [], strengths = [];
+    DATA[fw].items.forEach(item => {
+      const r = ratings[item.id];
+      if (r.na) return;
+      if (r.score === null) return;
+      evaluated++;
+      sum += r.score;
+      if (r.score <= 1) problems.push(`${item.num} ${item.title} (${r.score}/4${r.notes ? ': '+r.notes : ''})`);
+      if (r.score >= 3) strengths.push(`${item.num} ${item.title} (${r.score}/4)`);
+    });
+    const avg = evaluated > 0 ? (sum/evaluated).toFixed(2) : 'N/A';
+    prompt += `\n[${fwNames[fw]}] Média: ${avg}/4 (${evaluated} critérios avaliados)\n`;
+    if (problems.length) prompt += `  Pontos críticos: ${problems.join('; ')}\n`;
+    if (strengths.length) prompt += `  Pontos fortes: ${strengths.join('; ')}\n`;
+  });
+
+  prompt += `
+Gere uma análise estruturada com:
+1. **Diagnóstico Geral** — parágrafo resumindo o estado geral da interface
+2. **Principais Problemas** — os 3-5 problemas mais críticos e seu impacto no usuário
+3. **Pontos Positivos** — o que a interface faz bem
+4. **Recomendações Prioritárias** — ações concretas ordenadas por impacto
+5. **Conclusão** — síntese em 2-3 frases
+
+Use linguagem acadêmica acessível. Seja específico sobre o site avaliado. Máximo 400 palavras.`;
+  return prompt;
+}
+
+function buildClassPrompt(submissions) {
+  const site = classSession?.site || 'não informado';
+  const sessionName = classSession?.name || 'Turma';
+  const fwNames = {nielsen:'Nielsen',bastien:'Bastien & Scapin',wcag:'WCAG 2.1',gestalt:'Gestalt'};
+
+  // Calcular médias por critério (média das médias dos alunos)
+  const criterionAvgs = {};
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    DATA[fw].items.forEach(item => {
+      let sum = 0, cnt = 0;
+      submissions.forEach(sub => {
+        const r = sub.ratings[item.id];
+        if (r && !r.na && r.score !== null) { sum += r.score; cnt++; }
+      });
+      criterionAvgs[item.id] = cnt > 0 ? sum/cnt : null;
+    });
+  });
+
+  // Top problemas e destaques
+  const allCriteria = [];
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    DATA[fw].items.forEach(item => {
+      const avg = criterionAvgs[item.id];
+      if (avg !== null) allCriteria.push({ fw, item, avg });
+    });
+  });
+  allCriteria.sort((a,b) => a.avg - b.avg);
+  const top5Problems = allCriteria.slice(0,5);
+  const top5Strengths = allCriteria.slice(-5).reverse();
+
+  // Médias por framework
+  const fwAvgs = {};
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    let s=0, c=0;
+    DATA[fw].items.forEach(item => {
+      const avg = criterionAvgs[item.id];
+      if (avg !== null) { s += avg; c++; }
+    });
+    fwAvgs[fw] = c > 0 ? s/c : null;
+  });
+
+  let prompt = `Você é um especialista em Usabilidade e IHC. Analise os resultados consolidados de ${submissions.length} alunos da disciplina "${sessionName}" que avaliaram o site "${site}".
+
+MÉDIAS POR FRAMEWORK (consenso da turma):
+${['nielsen','bastien','wcag','gestalt'].map(fw => `- ${fwNames[fw]}: ${fwAvgs[fw] !== null ? fwAvgs[fw].toFixed(2)+'/4' : 'N/A'}`).join('\n')}
+
+TOP 5 CRITÉRIOS MAIS PROBLEMÁTICOS (menor nota média da turma):
+${top5Problems.map(({item,avg}) => `- ${item.num} ${item.title}: ${avg.toFixed(2)}/4`).join('\n')}
+
+TOP 5 CRITÉRIOS MELHOR AVALIADOS:
+${top5Strengths.map(({item,avg}) => `- ${item.num} ${item.title}: ${avg.toFixed(2)}/4`).join('\n')}
+
+Gere um parecer pedagógico e técnico com:
+1. **Consenso da Turma** — o que os avaliadores concordaram sobre a interface
+2. **Problemas Críticos Identificados** — análise dos principais problemas com impacto UX
+3. **Pontos de Divergência** (se houver) — aspectos onde as opiniões variam
+4. **Recomendações Coletivas** — melhorias prioritárias baseadas no consenso
+5. **Síntese Pedagógica** — o que este exercício revela sobre a interface e sobre o aprendizado da turma
+
+Linguagem acadêmica, objetiva e construtiva. Máximo 450 palavras.`;
+  return prompt;
+}
+
+async function callClaudeAPI(prompt, resultEl, loadingEl, btnEl, errorEl) {
+  btnEl.disabled = true;
+  loadingEl.classList.add('show');
+  resultEl.classList.remove('show');
+  resultEl.innerHTML = '';
+  errorEl.classList.remove('show');
+
+  try {
+    const response = await fetch(PROXY_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        stream: true,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      const errText = await response.text().catch(()=>'');
+      throw new Error(errText || `HTTP ${response.status}`);
+    }
+
+    loadingEl.classList.remove('show');
+    resultEl.classList.add('show');
+
+    // Streaming
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let fullText = '';
+    const cursor = '<span class="ai-streaming-cursor"></span>';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop();
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+            fullText += parsed.delta.text;
+            resultEl.innerHTML = formatAIText(fullText) + cursor;
+          }
+        } catch(e) {}
+      }
+    }
+
+    // Renderização final sem cursor
+    resultEl.innerHTML = formatAIText(fullText);
+    btnEl.textContent = '🔄 Gerar novamente';
+
+  } catch (err) {
+    loadingEl.classList.remove('show');
+    errorEl.classList.add('show');
+    const isNotConfigured = PROXY_URL === 'COLE_AQUI_A_URL_DA_VERCEL';
+    errorEl.innerHTML = isNotConfigured
+      ? '⚠️ <strong>Proxy não configurado.</strong> Siga o README para publicar o proxy na Vercel e atualize a variável <code>PROXY_URL</code> no topo do script.'
+      : `⚠️ Erro ao gerar análise: ${err.message}`;
+    btnEl.disabled = false;
+  }
+  btnEl.disabled = false;
+}
+
+function formatAIText(text) {
+  return text
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/^#+\s+(.+)$/gm, '<span class="ai-section-title">$1</span>')
+    .replace(/\n\n/g, '</p><p>')
+    .replace(/\n/g, '<br>')
+    .replace(/^/, '<p>').replace(/$/, '</p>');
+}
+
+function generateIndividualAnalysis() {
+  const anyEvaluated = Object.values(ratings).some(r => r.score !== null || r.na);
+  if (!anyEvaluated) { showToast('⚠️ Avalie ao menos um critério antes de gerar a análise'); return; }
+
+  const prompt = buildIndividualPrompt();
+  callClaudeAPI(
+    prompt,
+    document.getElementById('aiIndividualResult'),
+    document.getElementById('aiIndividualLoading'),
+    document.getElementById('aiIndividualBtn'),
+    document.getElementById('aiIndividualError')
+  );
+}
+
+function generateClassAnalysis() {
+  if (!classSession) return;
+  const submissions = getSessionSubmissions(classSession.id);
+  if (submissions.length === 0) { showToast('⚠️ Sem avaliações para analisar'); return; }
+
+  const prompt = buildClassPrompt(submissions);
+  callClaudeAPI(
+    prompt,
+    document.getElementById('aiClassResult'),
+    document.getElementById('aiClassLoading'),
+    document.getElementById('aiClassBtn'),
+    document.getElementById('aiClassError')
+  );
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+['nielsen','bastien','wcag','gestalt'].forEach(buildCriteria);
+updateProgress();
+initClassMode();
+</script>
+
+</body>
+</html>
