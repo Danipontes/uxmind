@@ -28,7 +28,7 @@ export default async function handler(req) {
     const body = await req.json();
     const prompt = body.messages?.[0]?.content || '';
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:streamGenerateContent?alt=sse&key=${apiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:streamGenerateContent?alt=sse&key=${apiKey}`;
 
     const upstream = await fetch(url, {
       method: 'POST',
