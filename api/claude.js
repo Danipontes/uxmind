@@ -41,7 +41,11 @@ export default async function handler(req) {
 
     if (!upstream.ok) {
       const err = await upstream.text();
-      return new Response(JSON.stringify({ error: err }), {
+      let message = err;
+      if (upstream.status === 429) {
+        message = 'LIMIT_REACHED';
+      }
+      return new Response(JSON.stringify({ error: message }), {
         status: upstream.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }

@@ -1777,8 +1777,11 @@ async function callClaudeAPI(prompt, resultEl, loadingEl, btnEl, errorEl) {
     loadingEl.classList.remove('show');
     errorEl.classList.add('show');
     const isNotConfigured = PROXY_URL === 'COLE_AQUI_A_URL_DA_VERCEL';
+    const isLimitReached = err.message.includes('LIMIT_REACHED') || err.message.includes('429');
     errorEl.innerHTML = isNotConfigured
       ? '⚠️ <strong>Proxy não configurado.</strong> Siga o README para publicar o proxy na Vercel e atualize a variável <code>PROXY_URL</code> no topo do script.'
+      : isLimitReached
+      ? '⏳ <strong>Limite gratuito do Gemini atingido.</strong> A cota é renovada diariamente (a meia-noite no horário do Pacífico). Tente novamente amanhã ou acesse <a href="https://aistudio.google.com" target="_blank" style="color:var(--accent)">aistudio.google.com</a> para verificar seu uso.'
       : `⚠️ Erro ao gerar análise: ${err.message}`;
     btnEl.disabled = false;
   }
