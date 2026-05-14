@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>v1305-22h47-Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA</title>
+<title>Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -11,6 +11,53 @@
     --accent: #7c6af7; --accent2: #f7a26a; --accent3: #6af7c0; --accent4: #f76a8a;
     --text: #e8e8f0; --muted: #7a7a9a; --green: #4ade80; --yellow: #facc15; --red: #f87171;
   }
+
+  /* ══ TEMA ALUNO — fundo petróleo escuro, acento teal ══ */
+  body.student-mode {
+    --bg: #080f12; --surface: #0e1a20; --surface2: #152229; --border: #1e3340;
+    --accent: #22d3b0; --accent2: #38bdf8; --accent3: #6af7c0; --accent4: #f76a8a;
+    --text: #dff4f0; --muted: #5a8a9f;
+  }
+  body.student-mode header::before {
+    background: radial-gradient(ellipse, rgba(34,211,176,0.18) 0%, transparent 70%);
+  }
+  body.student-mode .tab.active { border-bottom-color: var(--accent); }
+  body.student-mode .criterion:hover { border-color: var(--accent); }
+  body.student-mode .criterion-num { color: var(--accent) !important; background: rgba(34,211,176,0.1) !important; }
+  body.student-mode .prog-pct { color: var(--accent); }
+  body.student-mode .prog-global-fill { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  body.student-mode .notes-area:focus,
+  body.student-mode .project-field:focus-within { border-color: var(--accent); }
+  body.student-mode .class-mode-banner {
+    background: linear-gradient(135deg, rgba(34,211,176,0.12), rgba(56,189,248,0.08));
+    border-color: rgba(34,211,176,0.4);
+  }
+  body.student-mode .class-mode-banner .info strong { color: var(--accent); }
+  body.student-mode .submit-btn { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #080f12; }
+  body.student-mode .tag { background: rgba(34,211,176,0.12); color: var(--accent); border-color: rgba(34,211,176,0.3); }
+  body.student-mode .ref-box { border-left-color: var(--accent); }
+  body.student-mode .ref-box h4 { color: var(--accent); }
+  body.student-mode .star:hover { border-color: var(--accent); color: var(--accent); }
+  body.student-mode .framework-intro { background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); }
+  body.student-mode .class-mode-btn { display: none; } /* aluno não vê o botão modo turma */
+
+  /* Pílula de papel no header do aluno */
+  .student-role-badge {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(34,211,176,0.12);
+    border: 1px solid rgba(34,211,176,0.35);
+    border-radius: 20px;
+    color: #22d3b0;
+    font-size: 0.78rem;
+    font-family: 'DM Mono', monospace;
+    justify-content: center;
+  }
+  body.student-mode .student-role-badge { display: inline-flex; }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
 
@@ -408,6 +455,9 @@
   .class-empty-state .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
   .class-empty-state p { font-size: 0.9rem; }
 
+  .cab-btn.refreshing { opacity: 0.6; cursor: not-allowed; }
+  .cab-btn.refreshing::before { content: ''; display: inline-block; width: 10px; height: 10px; border: 2px solid currentColor; border-top-color: transparent; border-radius: 50%; animation: spin 0.6s linear infinite; margin-right: 0.35rem; vertical-align: middle; }
+
   /* Notificação toast */
   .toast {
     position: fixed;
@@ -626,6 +676,9 @@
   <button class="class-mode-btn" onclick="openClassModal()" id="classModeBtnHeader">
     🎓 Modo Turma
   </button>
+  <div class="student-role-badge" id="studentRoleBadge">
+    🎓 Modo Aluno · avaliação em andamento
+  </div>
 </header>
 
 <!-- ══════════════════ BARRA DE PROGRESSO GLOBAL ══════════════════ -->
@@ -663,6 +716,7 @@
   <span>🎓 <strong id="classSessionLabel">Sessão ativa</strong></span>
   <button class="cab-btn primary" onclick="copyStudentLink()">🔗 Copiar link dos alunos</button>
   <button class="cab-btn" onclick="showTab('class-dashboard', document.querySelector('.tab[data-tab=class-dashboard]'))">📊 Ver dashboard da turma</button>
+  <button class="cab-btn" id="refreshBtn" onclick="refreshDashboard()">🔄 Atualizar</button>
   <button class="cab-btn" onclick="closeClassSession()">✕ Encerrar sessão</button>
 </div>
 
@@ -960,89 +1014,62 @@ const ratings = {};
 // ─── MODO TURMA ───────────────────────────────────────────────────────────────
 let classSession = null; // { id, site, name, role: 'professor'|'student' }
 
-function initClassMode() {
+// URL base da API — mesma origem do HTML (Vercel)
+const API = '';
+
+// ── helpers de API ────────────────────────────────────────────────────────────
+async function getSessionData(sessionId) {
+  try {
+    const r = await fetch(`${API}/api/session?id=${sessionId}`);
+    if (!r.ok) return null;
+    return await r.json();
+  } catch(e) { return null; }
+}
+
+async function saveSessionData(sessionId, data) {
+  // Já criado no createClassSession via POST — nada a fazer aqui
+}
+
+async function getSessionSubmissions(sessionId) {
+  try {
+    const r = await fetch(`${API}/api/submit?session=${sessionId}`);
+    if (!r.ok) return [];
+    return await r.json();
+  } catch(e) { return []; }
+}
+
+async function saveSubmission(sessionId, submission) {
+  await fetch(`${API}/api/submit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(submission)
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+async function initClassMode() {
   const params = new URLSearchParams(window.location.search);
   const sessionId = params.get('session');
   const role = params.get('role');
 
-  if (sessionId && role === 'student') {
-    // Modo aluno — tenta localStorage primeiro, senão usa dados embutidos na URL
-    classSession = { id: sessionId, role: 'student' };
-    let sessionData = getSessionData(sessionId);
-    if (!sessionData) {
-      // Dados da sessão vieram embutidos na URL (funciona em qualquer navegador)
-      const sdataRaw = params.get('sdata');
-      if (sdataRaw) {
-        try { sessionData = JSON.parse(decodeURIComponent(sdataRaw)); } catch(e) {}
-      }
-    }
-    if (sessionData) {
-      classSession.site = sessionData.site;
-      classSession.name = sessionData.name;
-      setupStudentMode();
-    } else {
-      // Fallback: mostrar modo aluno mesmo sem dados da sessão
-      setupStudentMode();
-    }
-  } else if (sessionId && role === 'professor') {
-    // Professor abrindo dashboard direto (ou recebendo link de entrega de aluno)
-    classSession = { id: sessionId, role: 'professor' };
-    const sessionData = getSessionData(sessionId);
-    if (sessionData) {
-      classSession.site = sessionData.site;
-      classSession.name = sessionData.name;
-      setupProfessorMode();
-    }
+  if (!sessionId) return;
 
-    // Importar submissão de aluno embutida na URL (link de entrega)
-    const submitRaw = params.get('submit');
-    if (submitRaw) {
-      try {
-        const submission = JSON.parse(decodeURIComponent(submitRaw));
-        saveSubmission(sessionId, submission);
-        showToast(`✅ Avaliação de ${submission.email} importada!`);
-        // Limpar o parâmetro da URL sem recarregar
-        const cleanUrl = `${window.location.pathname}?session=${sessionId}&role=professor`;
-        history.replaceState(null, '', cleanUrl);
-      } catch(e) { showToast('⚠️ Erro ao importar avaliação do link.'); }
-    }
+  const sessionData = await getSessionData(sessionId);
+
+  if (role === 'student') {
+    classSession = { id: sessionId, role: 'student', ...(sessionData || {}) };
+    setupStudentMode();
+  } else if (role === 'professor') {
+    classSession = { id: sessionId, role: 'professor', ...(sessionData || {}) };
+    setupProfessorMode();
   }
 }
 
-function getSessionData(sessionId) {
-  try {
-    const key = `uxeval_session_${sessionId}`;
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : null;
-  } catch(e) { return null; }
-}
-
-function saveSessionData(sessionId, data) {
-  try {
-    localStorage.setItem(`uxeval_session_${sessionId}`, JSON.stringify(data));
-  } catch(e) {}
-}
-
-function getSessionSubmissions(sessionId) {
-  try {
-    const key = `uxeval_submissions_${sessionId}`;
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : [];
-  } catch(e) { return []; }
-}
-
-function saveSubmission(sessionId, submission) {
-  const subs = getSessionSubmissions(sessionId);
-  // Evitar duplicata do mesmo email
-  const idx = subs.findIndex(s => s.email === submission.email);
-  if (idx >= 0) subs[idx] = submission;
-  else subs.push(submission);
-  try {
-    localStorage.setItem(`uxeval_submissions_${sessionId}`, JSON.stringify(subs));
-  } catch(e) {}
-}
-
 function setupStudentMode() {
+  // Aplicar tema do aluno
+  document.body.classList.add('student-mode');
+  document.title = '📝 Avaliação — Modo Aluno';
+
   // Preencher campos e travar o site
   const siteInput = document.getElementById('projectName');
   siteInput.value = classSession.site || '';
@@ -1098,12 +1125,16 @@ function addSubmitSection() {
   main.appendChild(submitDiv);
 }
 
-function submitStudentEvaluation() {
+async function submitStudentEvaluation() {
   const email = document.getElementById('evaluatorEmail').value.trim();
   if (!email) {
     showToast('⚠️ Preencha seu e-mail antes de enviar!');
     return;
   }
+
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Enviando...';
 
   const submission = {
     email,
@@ -1112,44 +1143,28 @@ function submitStudentEvaluation() {
     ratings: JSON.parse(JSON.stringify(ratings))
   };
 
-  // Salva localmente (funciona se for o mesmo browser do professor)
-  saveSubmission(classSession.id, submission);
-
-  // Gera link de entrega com dados embutidos na URL
-  const base = window.location.href.split('?')[0];
-  const submissionEncoded = encodeURIComponent(JSON.stringify(submission));
-  const deliveryLink = `${base}?session=${classSession.id}&role=professor&submit=${submissionEncoded}`;
-
-  // UI feedback
-  document.getElementById('submitForm').style.display = 'none';
-  const successEl = document.getElementById('submitSuccess');
-  successEl.style.display = 'flex';
-
-  // Mostrar link de entrega para copiar e enviar ao professor
-  const linkBox = document.createElement('div');
-  linkBox.style.cssText = 'margin-top:1rem;text-align:left;width:100%';
-  linkBox.innerHTML = `
-    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">
-      📋 <strong>Copie este link e envie ao professor</strong> (caso ele não esteja no mesmo computador):
-    </p>
-    <div class="link-box" onclick="copyDeliveryLink(this)" title="Clique para copiar">${deliveryLink}</div>
-    <p class="copy-hint">👆 Clique no link para copiar</p>
-  `;
-  successEl.appendChild(linkBox);
-
-  showToast('✅ Avaliação enviada!');
-}
-
-function copyDeliveryLink(el) {
-  navigator.clipboard.writeText(el.textContent).then(() => {
-    showToast('🔗 Link copiado! Envie ao professor.');
-  });
+  try {
+    await saveSubmission(classSession.id, submission);
+    document.getElementById('submitForm').style.display = 'none';
+    document.getElementById('submitSuccess').style.display = 'flex';
+    showToast('✅ Avaliação enviada!');
+  } catch(e) {
+    showToast('⚠️ Erro ao enviar. Tente novamente.');
+    btn.disabled = false;
+    btn.textContent = 'Enviar Avaliação';
+  }
 }
 
 function setupProfessorMode() {
   document.getElementById('classActionBar').classList.add('visible');
   document.getElementById('classSessionLabel').textContent = `${classSession.name || classSession.id} · ${classSession.site}`;
   document.querySelector('.tab[data-tab="class-dashboard"]').style.display = 'flex';
+
+  // Auto-refresh a cada 30s quando o dashboard da turma estiver visível
+  setInterval(() => {
+    const dashActive = document.getElementById('section-class-dashboard')?.classList.contains('active');
+    if (dashActive) buildClassDashboard();
+  }, 30000);
 
   // Preencher site
   const siteInput = document.getElementById('projectName');
@@ -1166,29 +1181,35 @@ function closeClassModal() {
   document.getElementById('classModal').classList.remove('open');
 }
 
-function createClassSession() {
+async function createClassSession() {
   const site = document.getElementById('classSiteInput').value.trim();
   const name = document.getElementById('classNameInput').value.trim();
 
   if (!site) { showToast('⚠️ Informe o site a ser avaliado'); return; }
 
-  const sessionId = 'sess_' + Date.now().toString(36) + Math.random().toString(36).substr(2,5);
+  let session;
+  try {
+    const r = await fetch(`${API}/api/session`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ site, name })
+    });
+    session = await r.json();
+  } catch(e) {
+    showToast('⚠️ Erro ao criar sessão. Verifique a API.');
+    return;
+  }
 
-  const sessionData = { id: sessionId, site, name, createdAt: new Date().toISOString() };
-  saveSessionData(sessionId, sessionData);
+  classSession = { id: session.id, site, name, role: 'professor' };
 
-  classSession = { id: sessionId, site, name, role: 'professor' };
-
-  // Gerar link de aluno — dados da sessão embutidos na URL para funcionar em qualquer navegador
+  // Gerar link de aluno — simples, sem dados embutidos na URL
   const base = window.location.href.split('?')[0];
-  const sessionEncoded = encodeURIComponent(JSON.stringify(sessionData));
-  const studentLink = `${base}?session=${sessionId}&role=student&sdata=${sessionEncoded}`;
+  const studentLink = `${base}?session=${session.id}&role=student`;
 
   document.getElementById('generatedLink').textContent = studentLink;
   document.getElementById('classStep1').style.display = 'none';
   document.getElementById('classStep2').style.display = 'block';
 
-  // Ativar barra do professor
   setupProfessorMode();
 }
 
@@ -1204,9 +1225,7 @@ function copyGeneratedLink() {
 function copyStudentLink() {
   if (!classSession) return;
   const base = window.location.href.split('?')[0];
-  const sessionData = getSessionData(classSession.id) || { id: classSession.id, site: classSession.site, name: classSession.name };
-  const sessionEncoded = encodeURIComponent(JSON.stringify(sessionData));
-  const studentLink = `${base}?session=${classSession.id}&role=student&sdata=${sessionEncoded}`;
+  const studentLink = `${base}?session=${classSession.id}&role=student`;
   navigator.clipboard.writeText(studentLink).then(() => showToast('🔗 Link copiado!'));
 }
 
@@ -1217,6 +1236,17 @@ function closeClassSession() {
   showToast('✓ Sessão encerrada');
 }
 
+async function refreshDashboard() {
+  const btn = document.getElementById('refreshBtn');
+  if (!btn || btn.classList.contains('refreshing')) return;
+  btn.classList.add('refreshing');
+  btn.textContent = 'Atualizando...';
+  await buildClassDashboard();
+  btn.classList.remove('refreshing');
+  btn.textContent = '🔄 Atualizar';
+  showToast('✓ Dashboard atualizado');
+}
+
 function openClassDashboard() {
   closeClassModal();
   const tab = document.querySelector('.tab[data-tab="class-dashboard"]');
@@ -1225,10 +1255,11 @@ function openClassDashboard() {
 }
 
 // ─── DASHBOARD DA TURMA ───────────────────────────────────────────────────────
-function buildClassDashboard() {
+async function buildClassDashboard() {
   if (!classSession) return;
   const container = document.getElementById('classDashboardContent');
-  const submissions = getSessionSubmissions(classSession.id);
+  container.innerHTML = '<div style="padding:2rem;text-align:center;color:var(--muted)">Carregando...</div>';
+  const submissions = await getSessionSubmissions(classSession.id);
 
   if (submissions.length === 0) {
     container.innerHTML = `
@@ -1384,9 +1415,9 @@ function buildClassDashboard() {
   container.appendChild(btnDiv);
 }
 
-function exportClassCSV() {
+async function exportClassCSV() {
   if (!classSession) return;
-  const submissions = getSessionSubmissions(classSession.id);
+  const submissions = await getSessionSubmissions(classSession.id);
   if (submissions.length === 0) { showToast('Sem avaliações para exportar'); return; }
 
   const allItems = [];
@@ -1954,9 +1985,9 @@ function generateIndividualAnalysis() {
   );
 }
 
-function generateClassAnalysis() {
+async function generateClassAnalysis() {
   if (!classSession) return;
-  const submissions = getSessionSubmissions(classSession.id);
+  const submissions = await getSessionSubmissions(classSession.id);
   if (submissions.length === 0) { showToast('⚠️ Sem avaliações para analisar'); return; }
 
   const prompt = buildClassPrompt(submissions);
