@@ -1005,13 +1005,12 @@ function initClassMode() {
   if (sessionId && role === 'student') {
     // Modo aluno
     classSession = { id: sessionId, role: 'student' };
-    // Carregar site do sessionStorage compartilhado
+    // Tenta carregar do localStorage (mesmo dispositivo); senão usa parâmetros da URL
     const sessionData = getSessionData(sessionId);
-    if (sessionData) {
-      classSession.site = sessionData.site;
-      classSession.name = sessionData.name;
-      setupStudentMode();
-    }
+    classSession.site = (sessionData && sessionData.site) || decodeURIComponent(params.get('site') || '');
+    classSession.name = (sessionData && sessionData.name) || decodeURIComponent(params.get('name') || sessionId);
+    // setupStudentMode sempre é chamada quando role=student, independente do localStorage
+    setupStudentMode();
   } else if (sessionId && role === 'professor') {
     // Professor abrindo dashboard direto
     classSession = { id: sessionId, role: 'professor' };
@@ -1058,6 +1057,18 @@ function saveSubmission(sessionId, submission) {
 }
 
 function setupStudentMode() {
+  // Aplicar tema Verde/Teal para modo aluno
+  const root = document.documentElement;
+  root.style.setProperty('--bg',      '#0b0f0e');
+  root.style.setProperty('--surface', '#111a17');
+  root.style.setProperty('--surface2','#172320');
+  root.style.setProperty('--border',  '#1f3530');
+  root.style.setProperty('--accent',  '#2dd4a0');
+  root.style.setProperty('--accent2', '#6af7c0');
+  root.style.setProperty('--accent3', '#38bdf8');
+  root.style.setProperty('--accent4', '#34d399');
+  root.style.setProperty('--muted',   '#6b9e8e');
+
   // Preencher campos e travar o site
   const siteInput = document.getElementById('projectName');
   siteInput.value = classSession.site || '';
@@ -1168,9 +1179,9 @@ function createClassSession() {
 
   classSession = { id: sessionId, site, name, role: 'professor' };
 
-  // Gerar link de aluno
+  // Gerar link de aluno (inclui site e name para funcionar em outros dispositivos)
   const base = window.location.href.split('?')[0];
-  const studentLink = `${base}?session=${sessionId}&role=student`;
+  const studentLink = `${base}?session=${sessionId}&role=student&site=${encodeURIComponent(site)}&name=${encodeURIComponent(name)}`;
 
   document.getElementById('generatedLink').textContent = studentLink;
   document.getElementById('classStep1').style.display = 'none';
@@ -1192,7 +1203,7 @@ function copyGeneratedLink() {
 function copyStudentLink() {
   if (!classSession) return;
   const base = window.location.href.split('?')[0];
-  const studentLink = `${base}?session=${classSession.id}&role=student`;
+  const studentLink = `${base}?session=${classSession.id}&role=student&site=${encodeURIComponent(classSession.site||'')}&name=${encodeURIComponent(classSession.name||'')}`;
   navigator.clipboard.writeText(studentLink).then(() => showToast('🔗 Link copiado!'));
 }
 
