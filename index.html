@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>v23h31-Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA</title>
+<title>Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1697,40 +1697,127 @@ const PROXY_URL = 'https://uxihc-proxy.vercel.app/api/claude';
 
 function buildIndividualPrompt() {
   const site = document.getElementById('projectName').value || 'não informado';
-  const fwNames = {nielsen:'Heurísticas de Nielsen',bastien:'Critérios de Bastien & Scapin',wcag:'WCAG 2.1',gestalt:'Princípios da Gestalt'};
-  const labels = ['Péssimo','Ruim','Regular','Bom','Excelente'];
+  const fwNames = {
+    nielsen: 'Heurísticas de Nielsen (1994)',
+    bastien: 'Critérios Ergonômicos de Bastien & Scapin (1993)',
+    wcag:    'Diretrizes de Acessibilidade WCAG 2.1 (W3C, 2018)',
+    gestalt: 'Princípios da Gestalt aplicados à Interface'
+  };
+  const fwDescriptions = {
+    nielsen: 'conjunto de 10 princípios de usabilidade que orientam a avaliação heurística de interfaces, amplamente utilizados na prática profissional e acadêmica de IHC',
+    bastien: 'conjunto de 18 critérios ergonômicos organizados em 8 dimensões (Condução, Carga de Trabalho, Controle Explícito, Adaptabilidade, Gestão de Erros, Consistência, Significado dos Códigos e Compatibilidade), com foco na eficiência e conforto do usuário',
+    wcag:    'diretrizes internacionais de acessibilidade web organizadas em 4 princípios: Perceptível, Operável, Compreensível e Robusto (POUR), garantindo acesso universal à informação',
+    gestalt: 'leis da percepção visual (Proximidade, Semelhança, Continuidade, Fechamento, Figura-Fundo, Pregnância) que explicam como o cérebro organiza elementos visuais na interface'
+  };
+  const labels = ['Péssimo (0)','Ruim (1)','Regular (2)','Bom (3)','Excelente (4)'];
 
-  let prompt = `Você é um especialista em Usabilidade e IHC (Interação Humano-Computador). Analise os resultados desta avaliação heurística do site "${site}" e gere um relatório interpretativo em português.
-
-RESULTADOS DA AVALIAÇÃO:\n`;
-
+  // Montar dados detalhados por framework
+  const fwData = {};
   ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
     let evaluated = 0, sum = 0;
-    const problems = [], strengths = [];
+    const allItems = [];
     DATA[fw].items.forEach(item => {
       const r = ratings[item.id];
-      if (r.na) return;
-      if (r.score === null) return;
+      if (r.na || r.score === null) return;
       evaluated++;
       sum += r.score;
-      if (r.score <= 1) problems.push(`${item.num} ${item.title} (${r.score}/4${r.notes ? ': '+r.notes : ''})`);
-      if (r.score >= 3) strengths.push(`${item.num} ${item.title} (${r.score}/4)`);
+      allItems.push({
+        num: item.num,
+        title: item.title,
+        subtitle: item.subtitle,
+        score: r.score,
+        label: labels[r.score],
+        notes: r.notes || ''
+      });
     });
-    const avg = evaluated > 0 ? (sum/evaluated).toFixed(2) : 'N/A';
-    prompt += `\n[${fwNames[fw]}] Média: ${avg}/4 (${evaluated} critérios avaliados)\n`;
-    if (problems.length) prompt += `  Pontos críticos: ${problems.join('; ')}\n`;
-    if (strengths.length) prompt += `  Pontos fortes: ${strengths.join('; ')}\n`;
+    allItems.sort((a, b) => a.score - b.score);
+    fwData[fw] = {
+      avg: evaluated > 0 ? (sum / evaluated) : null,
+      evaluated,
+      items: allItems,
+      critical: allItems.filter(i => i.score <= 1),
+      weak:     allItems.filter(i => i.score === 2),
+      strong:   allItems.filter(i => i.score >= 3)
+    };
+  });
+
+  let prompt = `Você é um tutor especialista em IHC (Interação Humano-Computador) e Usabilidade, com experiência em ensino universitário. Sua tarefa é analisar didaticamente a avaliação heurística feita por um aluno de graduação avançado sobre o site "${site}".
+
+O aluno já estudou os referenciais teóricos em sala de aula e está aplicando o conhecimento pela primeira vez em uma avaliação real. Seu papel é:
+— Comentar o que o aluno identificou corretamente e o que pode ter escapado
+— Explicar o significado de cada resultado dentro do referencial teórico correspondente
+— Ajudar o aluno a conectar os achados de diferentes frameworks
+— Usar linguagem formativa, como um professor que orienta, não apenas julga
+
+A escala usada foi: 0=Péssimo, 1=Ruim, 2=Regular, 3=Bom, 4=Excelente. Critérios marcados como N/A foram desconsiderados.
+
+═══════════════════════════════════════
+RESPOSTAS DO ALUNO POR FRAMEWORK
+═══════════════════════════════════════
+`;
+
+  ['nielsen','bastien','wcag','gestalt'].forEach(fw => {
+    const d = fwData[fw];
+    if (d.evaluated === 0) return;
+
+    prompt += `\n▸ ${fwNames[fw]}\n`;
+    prompt += `  Definição: ${fwDescriptions[fw]}\n`;
+    prompt += `  Média obtida: ${d.avg.toFixed(2)}/4 (${d.evaluated} critérios avaliados)\n`;
+
+    if (d.critical.length > 0) {
+      prompt += `  Critérios com nota crítica (0–1):\n`;
+      d.critical.forEach(i => {
+        prompt += `    • ${i.num} — ${i.title}: ${i.label}\n`;
+        prompt += `      Definição do critério: ${i.subtitle}\n`;
+        if (i.notes) prompt += `      Observação do aluno: "${i.notes}"\n`;
+      });
+    }
+    if (d.weak.length > 0) {
+      prompt += `  Critérios com nota regular (2):\n`;
+      d.weak.forEach(i => {
+        prompt += `    • ${i.num} — ${i.title}: ${i.label}`;
+        if (i.notes) prompt += ` | Observação: "${i.notes}"`;
+        prompt += `\n`;
+      });
+    }
+    if (d.strong.length > 0) {
+      prompt += `  Critérios bem avaliados (3–4):\n`;
+      d.strong.forEach(i => {
+        prompt += `    • ${i.num} — ${i.title}: ${i.label}`;
+        if (i.notes) prompt += ` | Observação: "${i.notes}"`;
+        prompt += `\n`;
+      });
+    }
   });
 
   prompt += `
-Gere uma análise estruturada com:
-1. **Diagnóstico Geral** — parágrafo resumindo o estado geral da interface
-2. **Principais Problemas** — os 3-5 problemas mais críticos e seu impacto no usuário
-3. **Pontos Positivos** — o que a interface faz bem
-4. **Recomendações Prioritárias** — ações concretas ordenadas por impacto
-5. **Conclusão** — síntese em 2-3 frases
+═══════════════════════════════════════
+ESTRUTURA DO RETORNO DIDÁTICO
+═══════════════════════════════════════
 
-Use linguagem acadêmica acessível. Seja específico sobre o site avaliado. Máximo 400 palavras.`;
+Produza uma análise didática em português com as seguintes seções. Dirija-se ao aluno diretamente (use "você identificou", "sua avaliação", etc.):
+
+**1. Análise por Framework**
+Para cada framework que o aluno avaliou, escreva um parágrafo que:
+(a) Comente o que os resultados revelam sobre a interface naquele framework específico
+(b) Explique por que os critérios com notas baixas são problemáticos, conectando com o conceito teórico
+(c) Valide ou questione a percepção do aluno com base na definição do critério
+(d) Se o aluno deixou observações escritas, discuta-as especificamente
+
+**2. Conexões entre Frameworks**
+Identifique padrões que aparecem em mais de um framework (ex: um problema de consistência em Nielsen que também aparece em Bastien). Explique ao aluno como esses referenciais se complementam e o que a convergência de achados sugere sobre a interface.
+
+**3. Conclusão Integradora**
+Síntese de 3-4 frases sobre o perfil geral da interface avaliada, cruzando os quatro frameworks. Indique quais dimensões merecem atenção prioritária e por quê, do ponto de vista da experiência do usuário.
+
+REGRAS DE ESCRITA:
+— Tom formativo e encorajador, como um orientador acadêmico
+— Linguagem técnica mas acessível, adequada a alunos avançados de graduação
+— Cite os autores dos frameworks quando relevar (Nielsen, 1994; Bastien & Scapin, 1993; W3C, 2018; Wertheimer, 1923)
+— Seja específico: mencione os nomes dos critérios e as notas atribuídas
+— Não repita a lista de dados brutos — interprete-os
+— Máximo 550 palavras`;
+
   return prompt;
 }
 
@@ -1800,90 +1887,119 @@ function buildClassPrompt(submissions) {
     st.notes.forEach(n => allNotes.push(`[${st.item.num}] ${n}`));
   });
 
+  // ── Médias globais ──
+  let globalSum = 0, globalCount = 0;
+  allStats.forEach(s => { globalSum += s.avg; globalCount++; });
+  const globalAvg = globalCount > 0 ? globalSum / globalCount : null;
+
   // ── Montar prompt ──
-  let prompt = `Você é um especialista sênior em Usabilidade, IHC e Avaliação de Interfaces. Sua tarefa é produzir um relatório técnico de avaliação heurística consolidada, baseado nas respostas de ${submissions.length} avaliadores que analisaram o site "${site}".
+  let prompt = `Você é um pesquisador sênior em Usabilidade e IHC (Interação Humano-Computador), com sólida experiência em avaliação heurística e produção de relatórios técnico-científicos. Sua tarefa é produzir um relatório de avaliação heurística consolidada sobre o site "${site}", com base nos dados coletivos de ${submissions.length} avaliador${submissions.length > 1 ? 'es' : ''} treinados.
 
-A avaliação utilizou uma escala de 0 a 4 (0=Péssimo, 1=Ruim, 2=Regular, 3=Bom, 4=Excelente) aplicada a 4 frameworks científicos: ${Object.values(fwNames).join(', ')}.
+Os avaliadores utilizaram quatro frameworks científicos complementares: ${Object.values(fwNames).join(', ')}. A escala de pontuação foi: 0=Péssimo, 1=Ruim, 2=Regular, 3=Bom, 4=Excelente. Os dados abaixo representam a síntese estatística de todas as avaliações — use-os como evidências empíricas para construir o diagnóstico da interface.
 
 ═══════════════════════════════════════
-DADOS CONSOLIDADOS DA AVALIAÇÃO
+DADOS ESTATÍSTICOS CONSOLIDADOS
 ═══════════════════════════════════════
 
-PONTUAÇÃO MÉDIA POR FRAMEWORK:
+DESEMPENHO GLOBAL: ${globalAvg !== null ? (globalAvg/4*100).toFixed(0)+'% ('+globalAvg.toFixed(2)+'/4)' : 'N/A'}
+Avaliadores: ${submissions.length} | Critérios avaliados: ${allStats.length}
+
+MÉDIAS POR FRAMEWORK:
 ${['nielsen','bastien','wcag','gestalt'].map(fw => {
   const avg = fwAvgs[fw];
   const pct = avg !== null ? (avg/4*100).toFixed(0)+'%' : 'N/A';
-  return `• ${fwNames[fw]} [${fwRefs[fw]}]: ${avg !== null ? avg.toFixed(2)+'/4 ('+pct+')' : 'Não avaliado'}`;
+  const bar = avg !== null ? '█'.repeat(Math.round(avg)) + '░'.repeat(4-Math.round(avg)) : '—';
+  return `• ${fwNames[fw]} [${fwRefs[fw]}]\n  Score: ${avg !== null ? avg.toFixed(2)+'/4 ('+pct+') '+bar : 'Não avaliado'}`;
 }).join('\n')}
 
 `;
 
   if (critical.length > 0) {
-    prompt += `CRITÉRIOS CRÍTICOS (média ≤ 1,5/4 — problemas graves):
-${critical.map(s => `• ${s.item.num} — ${s.item.title}: ${s.avg.toFixed(2)}/4 | DP=${s.stddev.toFixed(2)} | n=${s.count}
-  Definição: ${s.item.subtitle}`).join('\n')}
+    prompt += `CRITÉRIOS CRÍTICOS — média ≤ 1,5/4 (falhas graves de usabilidade):
+${critical.map(s => {
+  const distStr = s.dist.map((d,i) => d > 0 ? `${i}:${d}x` : '').filter(Boolean).join(' ');
+  return `• ${s.item.num} — ${s.item.title}
+  Framework: ${fwNames[s.fw]} | Média: ${s.avg.toFixed(2)}/4 | DP: ${s.stddev.toFixed(2)} | n=${s.count}
+  Distribuição de notas: [${distStr}]
+  Definição do critério: ${s.item.subtitle}${s.notes.length > 0 ? '\n  Evidências qualitativas: ' + s.notes.slice(0,3).map(n => '"'+n+'"').join(' | ') : ''}`;
+}).join('\n')}
 
 `;
   }
 
   if (weak.length > 0) {
-    prompt += `CRITÉRIOS FRACOS (média entre 1,5 e 2,5/4 — problemas moderados):
-${weak.slice(0,6).map(s => `• ${s.item.num} — ${s.item.title}: ${s.avg.toFixed(2)}/4 | DP=${s.stddev.toFixed(2)}`).join('\n')}
+    prompt += `CRITÉRIOS FRACOS — média entre 1,5 e 2,5/4 (problemas moderados):
+${weak.map(s => {
+  const distStr = s.dist.map((d,i) => d > 0 ? `${i}:${d}x` : '').filter(Boolean).join(' ');
+  return `• ${s.item.num} — ${s.item.title} [${fwNames[s.fw]}]
+  Média: ${s.avg.toFixed(2)}/4 | DP: ${s.stddev.toFixed(2)} | Distribuição: [${distStr}]
+  Definição: ${s.item.subtitle}${s.notes.length > 0 ? '\n  Evidências: ' + s.notes.slice(0,2).map(n => '"'+n+'"').join(' | ') : ''}`;
+}).join('\n')}
 
 `;
   }
 
   if (strong.length > 0) {
-    prompt += `PONTOS FORTES (média ≥ 3,0/4 — aspectos bem avaliados):
-${strong.slice(0,6).map(s => `• ${s.item.num} — ${s.item.title}: ${s.avg.toFixed(2)}/4 | DP=${s.stddev.toFixed(2)}`).join('\n')}
+    prompt += `CRITÉRIOS BEM AVALIADOS — média ≥ 3,0/4 (pontos fortes da interface):
+${strong.slice(0,8).map(s => {
+  return `• ${s.item.num} — ${s.item.title} [${fwNames[s.fw]}]: ${s.avg.toFixed(2)}/4 | DP: ${s.stddev.toFixed(2)}
+  Definição: ${s.item.subtitle}`;
+}).join('\n')}
 
 `;
   }
 
   if (divergent.length > 0) {
-    prompt += `CRITÉRIOS COM MAIOR DIVERGÊNCIA entre avaliadores (alto desvio padrão):
-${divergent.map(s => `• ${s.item.num} — ${s.item.title}: média=${s.avg.toFixed(2)}/4, DP=${s.stddev.toFixed(2)} — avaliadores discordaram significativamente`).join('\n')}
+    prompt += `CRITÉRIOS COM ALTA DIVERGÊNCIA — DP ≥ 1,2 (avaliadores discordaram significativamente):
+${divergent.map(s => {
+  const distStr = s.dist.map((d,i) => d > 0 ? `${i}:${d}x` : '').filter(Boolean).join(' ');
+  return `• ${s.item.num} — ${s.item.title}: média=${s.avg.toFixed(2)}/4, DP=${s.stddev.toFixed(2)}
+  Distribuição: [${distStr}] — indica percepções radicalmente distintas sobre este aspecto`;
+}).join('\n')}
 
 `;
   }
 
   if (allNotes.length > 0) {
-    prompt += `OBSERVAÇÕES QUALITATIVAS DOS AVALIADORES (seleção):
-${allNotes.slice(0,10).map(n => `• "${n}"`).join('\n')}
+    prompt += `EVIDÊNCIAS QUALITATIVAS DOS AVALIADORES:
+${allNotes.slice(0,12).map(n => `• ${n}`).join('\n')}
 
 `;
   }
 
   prompt += `═══════════════════════════════════════
-INSTRUÇÕES PARA O RELATÓRIO
+ESTRUTURA DO RELATÓRIO TÉCNICO-ACADÊMICO
 ═══════════════════════════════════════
 
-Com base EXCLUSIVAMENTE nos dados acima, produza um relatório técnico estruturado em português com as seguintes seções:
+Com base EXCLUSIVAMENTE nos dados acima, produza um relatório técnico em português acadêmico formal, adequado para publicação ou arquivo institucional. O objeto de análise é a INTERFACE do site "${site}" — os avaliadores são o instrumento de medição, não o foco do relatório.
 
-**1. Panorama Geral da Interface**
-Síntese do desempenho global da interface avaliada, com base nas médias por framework. Interprete o que cada pontuação significa para a experiência do usuário. Indique se a interface apresenta desempenho satisfatório, regular ou insatisfatório de forma geral.
+**1. Caracterização da Avaliação**
+Descreva sucintamente o escopo da avaliação: site avaliado, número de avaliadores, frameworks utilizados e desempenho global obtido. Contextualize a pontuação geral dentro da escala (0–4) e indique o nível de maturidade de usabilidade que ela representa.
 
-**2. Pontos Fortes Identificados**
-Liste e explique os aspectos nos quais a interface se destacou positivamente segundo os avaliadores. Para cada ponto forte, explique por que isso beneficia o usuário com base no referencial teórico correspondente.
+**2. Diagnóstico por Dimensão Teórica**
+Para cada framework avaliado, produza um parágrafo analítico que:
+(a) Interprete a média obtida e o que ela revela sobre aquela dimensão da interface
+(b) Identifique os critérios mais problemáticos e explique seu impacto na experiência do usuário, com fundamentação no referencial teórico
+(c) Destaque os pontos fortes encontrados naquele framework e por que são relevantes
+(d) Incorpore as evidências qualitativas dos avaliadores quando disponíveis
 
-**3. Principais Problemas e Pontos Fracos**
-Analise os critérios com piores avaliações. Para cada problema crítico ou fraco: (a) descreva o problema, (b) explique o impacto negativo na experiência do usuário, (c) indique o referencial teórico que fundamenta a criticidade deste problema.
+**3. Análise de Convergência e Divergência**
+Identifique padrões transversais: problemas que se manifestam em múltiplos frameworks simultaneamente (indicam falhas sistêmicas da interface) e critérios com alta divergência entre avaliadores (indicam ambiguidade da interface ou complexidade do critério). Discuta o que cada padrão revela sobre a interface.
 
-**4. Áreas de Divergência entre Avaliadores**
-Se houver critérios com alto desvio padrão, discuta o que essa divergência pode indicar sobre a interface ou sobre a complexidade da avaliação daquele aspecto.
+**4. Mapa de Prioridades de Intervenção**
+Liste as recomendações de melhoria organizadas por nível de impacto (Alta / Média / Baixa prioridade). Cada recomendação deve: (a) nomear o problema específico com o critério correspondente, (b) descrever a ação de melhoria concreta, (c) justificar a prioridade com base no impacto na experiência do usuário e no referencial teórico.
 
-**5. Recomendações de Melhoria**
-Liste recomendações concretas e priorizadas por impacto, baseadas nos problemas identificados. Cada recomendação deve ser acionável e diretamente relacionada a um critério mal avaliado.
-
-**6. Conclusão**
-Síntese em 3-4 frases sobre o estado geral da interface e os próximos passos mais urgentes.
+**5. Conclusão Técnica**
+Síntese em 4-5 frases sobre o perfil de usabilidade da interface, os padrões mais relevantes identificados pela avaliação coletiva e os próximos passos mais urgentes para evolução da interface.
 
 REGRAS DE ESCRITA:
-- Use linguagem técnica e acadêmica, mas clara e objetiva
-- Cite os referenciais teóricos quando relevante (Nielsen, 1994; Bastien & Scapin, 1993; W3C, 2018)
-- Baseie-se nos dados fornecidos — não invente problemas não identificados pelos avaliadores
-- Se houver observações qualitativas, incorpore-as na análise como evidências
-- Máximo 600 palavras`;
+— Linguagem técnica e acadêmica formal, em terceira pessoa
+— Cite os referenciais obrigatoriamente: Nielsen (1994), Bastien & Scapin (1993), W3C (2018), Wertheimer (1923)
+— Mencione critérios pelo código e nome (ex: H1 — Visibilidade do Status)
+— Use os dados estatísticos como evidências: cite médias, desvios padrão e distribuições
+— Incorpore evidências qualitativas dos avaliadores como citações de suporte
+— Baseie-se estritamente nos dados fornecidos — não adicione problemas não identificados
+— Sem limite rígido de palavras: priorize completude e profundidade analítica`;
 
   return prompt;
 }
