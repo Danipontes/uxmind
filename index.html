@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UXMind — Heuristic Evaluation Tool · Profa. Dra. Danielle Pompeu Noronha Pontes (v13/5/21h57) - · UEA</title>
+<title>UXMind — Heuristic Evaluation Tool · Profa. Dra. Danielle Pompeu v13-05-22h10 · UEA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -1003,63 +1003,66 @@ const ratings = {};
 // ─── MODO TURMA ───────────────────────────────────────────────────────────────
 let classSession = null; // { id, site, name, role: 'professor'|'student' }
 
-function initClassMode() {
+async function initClassMode() {
   const params = new URLSearchParams(window.location.search);
   const sessionId = params.get('session');
   const role = params.get('role');
 
   if (sessionId && role === 'student') {
-    // Modo aluno
     classSession = { id: sessionId, role: 'student' };
-    // Tenta carregar do localStorage (mesmo dispositivo); senão usa parâmetros da URL
-    const sessionData = getSessionData(sessionId);
+    const sessionData = await getSessionData(sessionId);
     classSession.site = (sessionData && sessionData.site) || decodeURIComponent(params.get('site') || '');
     classSession.name = (sessionData && sessionData.name) || decodeURIComponent(params.get('name') || sessionId);
-    // setupStudentMode sempre é chamada quando role=student, independente do localStorage
     setupStudentMode();
   } else if (sessionId && role === 'professor') {
-    // Professor abrindo dashboard direto
     classSession = { id: sessionId, role: 'professor' };
-    const sessionData = getSessionData(sessionId);
-    // Usa localStorage se disponível; senão usa parâmetros da URL
+    const sessionData = await getSessionData(sessionId);
     classSession.site = (sessionData && sessionData.site) || decodeURIComponent(params.get('site') || '');
     classSession.name = (sessionData && sessionData.name) || decodeURIComponent(params.get('name') || sessionId);
-    // setupProfessorMode sempre é chamada quando role=professor, independente do localStorage
     setupProfessorMode();
   }
 }
 
-function getSessionData(sessionId) {
+// ─── STORAGE COMPARTILHADA (cross-device via window.storage shared) ──────────
+// Submissões dos alunos são salvas com shared=true para que o professor
+// consiga ler em qualquer dispositivo/navegador.
+
+async function getSessionData(sessionId) {
   try {
     const key = `uxeval_session_${sessionId}`;
+    // Tenta shared primeiro; fallback para localStorage (professor no mesmo device)
+    try {
+      const res = await window.storage.get(key, true);
+      if (res && res.value) return JSON.parse(res.value);
+    } catch(_) {}
     const raw = localStorage.getItem(key);
     return raw ? JSON.parse(raw) : null;
   } catch(e) { return null; }
 }
 
-function saveSessionData(sessionId, data) {
-  try {
-    localStorage.setItem(`uxeval_session_${sessionId}`, JSON.stringify(data));
-  } catch(e) {}
+async function saveSessionData(sessionId, data) {
+  const key = `uxeval_session_${sessionId}`;
+  const val = JSON.stringify(data);
+  try { await window.storage.set(key, val, true); } catch(_) {}
+  try { localStorage.setItem(key, val); } catch(_) {}
 }
 
-function getSessionSubmissions(sessionId) {
+async function getSessionSubmissions(sessionId) {
   try {
     const key = `uxeval_submissions_${sessionId}`;
-    const raw = localStorage.getItem(key);
-    return raw ? JSON.parse(raw) : [];
+    const res = await window.storage.get(key, true);
+    return (res && res.value) ? JSON.parse(res.value) : [];
   } catch(e) { return []; }
 }
 
-function saveSubmission(sessionId, submission) {
-  const subs = getSessionSubmissions(sessionId);
+async function saveSubmission(sessionId, submission) {
+  const subs = await getSessionSubmissions(sessionId);
   // Evitar duplicata do mesmo email
   const idx = subs.findIndex(s => s.email === submission.email);
   if (idx >= 0) subs[idx] = submission;
   else subs.push(submission);
-  try {
-    localStorage.setItem(`uxeval_submissions_${sessionId}`, JSON.stringify(subs));
-  } catch(e) {}
+  const key = `uxeval_submissions_${sessionId}`;
+  try { await window.storage.set(key, JSON.stringify(subs), true); } catch(e) {}
 }
 
 function setupStudentMode() {
@@ -1130,12 +1133,15 @@ function addSubmitSection() {
   main.appendChild(submitDiv);
 }
 
-function submitStudentEvaluation() {
+async function submitStudentEvaluation() {
   const email = document.getElementById('evaluatorEmail').value.trim();
   if (!email) {
     showToast('⚠️ Preencha seu e-mail antes de enviar!');
     return;
   }
+
+  const submitBtn = document.querySelector('.submit-btn');
+  if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando...'; }
 
   const submission = {
     email,
@@ -1144,12 +1150,15 @@ function submitStudentEvaluation() {
     ratings: JSON.parse(JSON.stringify(ratings))
   };
 
-  saveSubmission(classSession.id, submission);
-
-  // UI feedback
-  document.getElementById('submitForm').style.display = 'none';
-  document.getElementById('submitSuccess').style.display = 'flex';
-  showToast('✅ Avaliação enviada!');
+  try {
+    await saveSubmission(classSession.id, submission);
+    document.getElementById('submitForm').style.display = 'none';
+    document.getElementById('submitSuccess').style.display = 'flex';
+    showToast('✅ Avaliação enviada!');
+  } catch(e) {
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = 'Enviar Avaliação'; }
+    showToast('❌ Erro ao enviar. Tente novamente.');
+  }
 }
 
 function setupProfessorMode() {
@@ -1172,7 +1181,7 @@ function closeClassModal() {
   document.getElementById('classModal').classList.remove('open');
 }
 
-function createClassSession() {
+async function createClassSession() {
   const site = document.getElementById('classSiteInput').value.trim();
   const name = document.getElementById('classNameInput').value.trim();
 
@@ -1181,7 +1190,7 @@ function createClassSession() {
   const sessionId = 'sess_' + Date.now().toString(36) + Math.random().toString(36).substr(2,5);
 
   const sessionData = { id: sessionId, site, name, createdAt: new Date().toISOString() };
-  saveSessionData(sessionId, sessionData);
+  await saveSessionData(sessionId, sessionData);
 
   classSession = { id: sessionId, site, name, role: 'professor' };
 
@@ -1240,10 +1249,18 @@ function openClassDashboard() {
 }
 
 // ─── DASHBOARD DA TURMA ───────────────────────────────────────────────────────
-function buildClassDashboard() {
+async function buildClassDashboard() {
   if (!classSession) return;
   const container = document.getElementById('classDashboardContent');
-  const submissions = getSessionSubmissions(classSession.id);
+
+  // Estado de carregamento
+  container.innerHTML = `
+    <div class="class-empty-state">
+      <div class="icon">⏳</div>
+      <p>Carregando avaliações da turma...</p>
+    </div>`;
+
+  const submissions = await getSessionSubmissions(classSession.id);
 
   if (submissions.length === 0) {
     container.innerHTML = `
@@ -2489,9 +2506,10 @@ function applyTranslations() {
 // ─── INIT ─────────────────────────────────────────────────────────────────────
 ['nielsen','bastien','wcag','gestalt'].forEach(buildCriteria);
 updateProgress();
-initClassMode();
 applyTranslations();
+initClassMode(); // async — não bloqueia o restante da inicialização
 </script>
 
 </body>
 </html>
+
