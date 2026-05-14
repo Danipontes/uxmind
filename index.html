@@ -686,19 +686,15 @@
 
 <!-- ══════════════════ HEADER ══════════════════ -->
 <header>
-  <h1 id="headerTitle">Avaliador <span id="headerTitleSpan">UX / IHC</span></h1>
-  <p class="tagline">Avaliação heurística científica · Nielsen · Bastien &amp; Scapin · WCAG 2.1 · Gestalt</p>
+  <h1><span data-i18n="headerTitle">Avaliador</span> <span data-i18n="headerSpan">UX / IHC</span></h1>
+  <p class="tagline" data-i18n="tagline">Avaliação heurística científica · Nielsen · Bastien &amp; Scapin · WCAG 2.1 · Gestalt</p>
   <div class="header-meta">
     <span class="meta-author">👩‍🏫 Profa. Dra. Danielle Pompeu Noronha Pontes</span>
     <span class="meta-sep">·</span>
     <span class="meta-inst">Universidade do Estado do Amazonas — UEA · IHC</span>
   </div>
-  <button class="class-mode-btn" onclick="openClassModal()" id="classModeBtnHeader">
-    🎓 Modo Turma
-  </button>
-  <div class="student-role-badge" id="studentRoleBadge">
-    🎓 Modo Aluno · avaliação em andamento
-  </div>
+  <button class="class-mode-btn" onclick="openClassModal()" id="classModeBtnHeader" data-i18n="classModeBtn">🎓 Modo Turma</button>
+  <div class="student-role-badge" id="studentRoleBadge" data-i18n="studentBadge">🎓 Modo Aluno · avaliação em andamento</div>
   <button class="lang-btn" id="langBtn" onclick="toggleLang()">🌐 EN</button>
 </header>
 
@@ -735,20 +731,20 @@
 <!-- ══════════════════ BARRA DE AÇÕES DA TURMA (professor) ══════════════════ -->
 <div class="class-action-bar" id="classActionBar">
   <span>🎓 <strong id="classSessionLabel">Sessão ativa</strong></span>
-  <button class="cab-btn primary" id="copyLinkBtn" onclick="copyStudentLink()">🔗 Copiar link dos alunos</button>
-  <button class="cab-btn" id="viewDashBtn" onclick="showTab('class-dashboard', document.querySelector('.tab[data-tab=class-dashboard]'))">📊 Ver dashboard da turma</button>
-  <button class="cab-btn" id="refreshBtn" onclick="refreshDashboard()">🔄 Atualizar</button>
-  <button class="cab-btn" id="closeSessionBtn" onclick="closeClassSession()">✕ Encerrar sessão</button>
+  <button class="cab-btn primary" id="copyLinkBtn" onclick="copyStudentLink()" data-i18n="copyLinkBtn">🔗 Copiar link dos alunos</button>
+  <button class="cab-btn" id="viewDashBtn" data-i18n="viewDashBtn" onclick="showTab('class-dashboard', document.querySelector('.tab[data-tab=class-dashboard]'))">📊 Ver dashboard da turma</button>
+  <button class="cab-btn" id="refreshBtn" onclick="refreshDashboard()" data-i18n="refreshBtn">🔄 Atualizar</button>
+  <button class="cab-btn" id="closeSessionBtn" onclick="closeClassSession()" data-i18n="closeSessionBtn">✕ Encerrar sessão</button>
 </div>
 
 <!-- ══════════════════ TABS ══════════════════ -->
 <div class="tabs" id="tabsBar">
-  <div class="tab active" data-tab="nielsen" onclick="showTab('nielsen',this)"><div class="tab-dot"></div>🎯 Nielsen</div>
-  <div class="tab" data-tab="bastien" onclick="showTab('bastien',this)"><div class="tab-dot" style="background:var(--accent2)"></div>🔬 Bastien & Scapin</div>
-  <div class="tab" data-tab="wcag" onclick="showTab('wcag',this)"><div class="tab-dot" style="background:var(--accent3)"></div>♿ WCAG</div>
-  <div class="tab" data-tab="gestalt" onclick="showTab('gestalt',this)"><div class="tab-dot" style="background:var(--accent4)"></div>👁️ Gestalt</div>
-  <div class="tab" data-tab="dashboard" onclick="showTab('dashboard',this)"><div class="tab-dot" style="background:#facc15"></div>📊 Resultado</div>
-  <div class="tab tab-class-only" data-tab="class-dashboard" onclick="showTab('class-dashboard',this)" style="display:none;"><div class="tab-dot" style="background:var(--accent3)"></div>🎓 Turma</div>
+  <div class="tab active" data-tab="nielsen" data-i18n="tabNielsen" onclick="showTab('nielsen',this)"><div class="tab-dot"></div>🎯 Nielsen</div>
+  <div class="tab" data-tab="bastien" data-i18n="tabBastien" onclick="showTab('bastien',this)"><div class="tab-dot" style="background:var(--accent2)"></div>🔬 Bastien & Scapin</div>
+  <div class="tab" data-tab="wcag" data-i18n="tabWcag" onclick="showTab('wcag',this)"><div class="tab-dot" style="background:var(--accent3)"></div>♿ WCAG</div>
+  <div class="tab" data-tab="gestalt" data-i18n="tabGestalt" onclick="showTab('gestalt',this)"><div class="tab-dot" style="background:var(--accent4)"></div>👁️ Gestalt</div>
+  <div class="tab" data-tab="dashboard" data-i18n="tabResult" onclick="showTab('dashboard',this)"><div class="tab-dot" style="background:#facc15"></div>📊 Resultado</div>
+  <div class="tab tab-class-only" data-tab="class-dashboard" data-i18n="tabClass" onclick="showTab('class-dashboard',this)" style="display:none;"><div class="tab-dot" style="background:var(--accent3)"></div>🎓 Turma</div>
 </div>
 
 <!-- ══════════════════ MAIN ══════════════════ -->
@@ -757,12 +753,12 @@
   <!-- Campos do avaliador -->
   <div class="project-bar" id="projectBar">
     <div class="project-field">
-      <label>✉️ E-mail:</label>
-      <input type="email" id="evaluatorEmail" placeholder="seu@email.com" />
+      <label data-i18n="labelEmail">✉️ E-mail:</label>
+      <input type="email" id="evaluatorEmail" placeholder="seu@email.com" data-i18n-placeholder="placeholderEmail" />
     </div>
     <div class="project-field">
-      <label>🌐 Site:</label>
-      <input type="text" id="projectName" placeholder="www.exemplo.com.br" />
+      <label data-i18n="labelSite">🌐 Site:</label>
+      <input type="text" id="projectName" placeholder="www.exemplo.com.br" data-i18n-placeholder="placeholderSite" />
     </div>
   </div>
 
@@ -771,24 +767,24 @@
     <div class="framework-intro">
       <div class="icon">🎯</div>
       <div>
-        <h2>10 Heurísticas de Nielsen</h2>
-        <p>Criadas por Jakob Nielsen em 1994, são os princípios mais utilizados em avaliações heurísticas no mundo.</p>
-        <span class="tag">Nielsen Norman Group · 1994</span>
+        <h2 data-i18n="nielsenFwTitle">10 Heurísticas de Nielsen</h2>
+        <p data-i18n="nielsenFwDesc">Criadas por Jakob Nielsen em 1994, são os princípios mais utilizados em avaliações heurísticas no mundo.</p>
+        <span class="tag" data-i18n="nielsenFwTag">Nielsen Norman Group · 1994</span>
       </div>
     </div>
     <div class="ref-box">
-      <h4>📚 Referencial Teórico</h4>
-      <p>A <strong>Avaliação Heurística</strong> é um método de inspeção de usabilidade proposto por Nielsen e Molich (1990) e consolidado por Nielsen (1994). Consiste em examinar a interface com base em princípios estabelecidos sem a participação direta de usuários finais.</p>
-      <span class="ref-cite">NIELSEN, J. Enhancing the explanatory power of usability heuristics. CHI, 1994.<br>NIELSEN, J.; MOLICH, R. Heuristic evaluation of user interfaces. CHI, 1990.</span>
+      <h4 data-i18n="nielsenRefTitle">📚 Referencial Teórico</h4>
+      <p data-i18n-html="nielsenRefBody">A <strong>Avaliação Heurística</strong> é um método de inspeção de usabilidade proposto por Nielsen e Molich (1990) e consolidado por Nielsen (1994). Consiste em examinar a interface com base em princípios estabelecidos sem a participação direta de usuários finais.</p>
+      <span class="ref-cite"><span data-i18n-html="nielsenRefCite">NIELSEN, J. Enhancing the explanatory power of usability heuristics. CHI, 1994.<br>NIELSEN, J.; MOLICH, R. Heuristic evaluation of user interfaces. CHI, 1990.</span></span>
     </div>
     <div class="severity-legend">
-      <span>Pontuação:</span>
-      <div class="sev-item"><div class="sev-dot" style="background:var(--red)"></div>0 = Péssimo</div>
-      <div class="sev-item"><div class="sev-dot" style="background:#f97316"></div>1 = Ruim</div>
-      <div class="sev-item"><div class="sev-dot" style="background:var(--yellow)"></div>2 = Regular</div>
-      <div class="sev-item"><div class="sev-dot" style="background:#a3e635"></div>3 = Bom</div>
-      <div class="sev-item"><div class="sev-dot" style="background:var(--green)"></div>4 = Excelente</div>
-      <div class="sev-item"><div class="sev-dot" style="background:var(--border)"></div>N/A = Não se aplica</div>
+      <span data-i18n="scaleLegend">Pontuação:</span>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--red)"></div><span data-i18n="scale0">0 = Péssimo</span></div>
+      <div class="sev-item"><div class="sev-dot" style="background:#f97316"></div><span data-i18n="scale1">1 = Ruim</span></div>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--yellow)"></div><span data-i18n="scale2">2 = Regular</span></div>
+      <div class="sev-item"><div class="sev-dot" style="background:#a3e635"></div><span data-i18n="scale3">3 = Bom</span></div>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--green)"></div><span data-i18n="scale4">4 = Excelente</span></div>
+      <div class="sev-item"><div class="sev-dot" style="background:var(--border)"></div><span data-i18n="scaleNA">N/A = Não se aplica</span></div>
     </div>
     <div id="criteria-nielsen"></div>
   </div>
@@ -798,15 +794,15 @@
     <div class="framework-intro">
       <div class="icon">🔬</div>
       <div>
-        <h2>Critérios Ergonômicos de Bastien &amp; Scapin</h2>
-        <p>Desenvolvidos em 1993 pelo INRIA (França), estes 18 critérios oferecem análise granular da interface.</p>
-        <span class="tag">INRIA · Bastien &amp; Scapin · 1993</span>
+        <h2 data-i18n="bastienFwTitle">Critérios Ergonômicos de Bastien &amp; Scapin</h2>
+        <p data-i18n="bastienFwDesc">Desenvolvidos em 1993 pelo INRIA (França), estes 18 critérios oferecem análise granular da interface.</p>
+        <span class="tag" data-i18n="bastienFwTag">INRIA · Bastien &amp; Scapin · 1993</span>
       </div>
     </div>
     <div class="ref-box">
-      <h4>📚 Referencial Teórico</h4>
-      <p>Os <strong>Critérios Ergonômicos</strong> de Bastien e Scapin foram desenvolvidos no INRIA como resultado de extensa revisão de literatura. Os 18 critérios estão organizados em 8 dimensões: Condução, Carga de Trabalho, Controle Explícito, Adaptabilidade, Gestão de Erros, Consistência, Significado dos Códigos e Compatibilidade.</p>
-      <span class="ref-cite">BASTIEN, J. M. C.; SCAPIN, D. L. Ergonomic criteria for the evaluation of human-computer interfaces. Technical Report INRIA nº 156, 1993.</span>
+      <h4 data-i18n="bastienRefTitle">📚 Referencial Teórico</h4>
+      <p data-i18n-html="bastienRefBody">Os <strong>Critérios Ergonômicos</strong> de Bastien e Scapin foram desenvolvidos no INRIA como resultado de extensa revisão de literatura. Os 18 critérios estão organizados em 8 dimensões: Condução, Carga de Trabalho, Controle Explícito, Adaptabilidade, Gestão de Erros, Consistência, Significado dos Códigos e Compatibilidade.</p>
+      <span class="ref-cite"><span data-i18n-html="bastienRefCite">BASTIEN, J. M. C.; SCAPIN, D. L. Ergonomic criteria for the evaluation of human-computer interfaces. Technical Report INRIA nº 156, 1993.</span></span>
     </div>
     <div id="criteria-bastien"></div>
   </div>
@@ -816,15 +812,15 @@
     <div class="framework-intro">
       <div class="icon">♿</div>
       <div>
-        <h2>Diretrizes de Acessibilidade WCAG 2.1</h2>
-        <p>Padrão internacional do W3C: Perceptível, Operável, Compreensível e Robusto (POUR).</p>
-        <span class="tag">W3C · WCAG 2.1 · 2018</span>
+        <h2 data-i18n="wcagFwTitle">Diretrizes de Acessibilidade WCAG 2.1</h2>
+        <p data-i18n="wcagFwDesc">Padrão internacional do W3C: Perceptível, Operável, Compreensível e Robusto (POUR).</p>
+        <span class="tag" data-i18n="wcagFwTag">W3C · WCAG 2.1 · 2018</span>
       </div>
     </div>
     <div class="ref-box">
-      <h4>📚 Referencial Teórico</h4>
-      <p>As <strong>WCAG</strong> são desenvolvidas pelo W3C/WAI. A versão 2.1 (2018) expande a anterior com critérios para dispositivos móveis, baixa visão e deficiências cognitivas. No Brasil, a acessibilidade digital é regulamentada pelo Decreto nº 5.296/2004 e pelo eMAG.</p>
-      <span class="ref-cite">W3C. WCAG 2.1. W3C Recommendation, 05 June 2018. https://www.w3.org/TR/WCAG21/</span>
+      <h4 data-i18n="wcagRefTitle">📚 Referencial Teórico</h4>
+      <p data-i18n-html="wcagRefBody">As <strong>WCAG</strong> são desenvolvidas pelo W3C/WAI. A versão 2.1 (2018) expande a anterior com critérios para dispositivos móveis, baixa visão e deficiências cognitivas. No Brasil, a acessibilidade digital é regulamentada pelo Decreto nº 5.296/2004 e pelo eMAG.</p>
+      <span class="ref-cite"><span data-i18n-html="wcagRefCite">W3C. WCAG 2.1. W3C Recommendation, 05 June 2018. https://www.w3.org/TR/WCAG21/</span></span>
     </div>
     <div id="criteria-wcag"></div>
   </div>
@@ -834,15 +830,15 @@
     <div class="framework-intro">
       <div class="icon">👁️</div>
       <div>
-        <h2>Princípios da Gestalt na Interface</h2>
-        <p>Leis da percepção visual da psicologia alemã. Explicam como o cérebro organiza elementos visuais.</p>
-        <span class="tag">Psicologia da Gestalt · Wertheimer · 1923</span>
+        <h2 data-i18n="gestaltFwTitle">Princípios da Gestalt na Interface</h2>
+        <p data-i18n="gestaltFwDesc">Leis da percepção visual da psicologia alemã. Explicam como o cérebro organiza elementos visuais.</p>
+        <span class="tag" data-i18n="gestaltFwTag">Psicologia da Gestalt · Wertheimer · 1923</span>
       </div>
     </div>
     <div class="ref-box">
-      <h4>📚 Referencial Teórico</h4>
-      <p>A <strong>Psicologia da Gestalt</strong> surgiu na Alemanha no início do século XX. Seu princípio: "o todo é diferente da soma das partes". Aplicada ao design, explica como usuários agrupam informações, identificam hierarquias e percebem relações entre elementos visuais.</p>
-      <span class="ref-cite">WERTHEIMER, M. Laws of organization in perceptual forms. In: ELLIS, W. D. (ed.). A source book of Gestalt psychology. Routledge, 1938.</span>
+      <h4 data-i18n="gestaltRefTitle">📚 Referencial Teórico</h4>
+      <p data-i18n-html="gestaltRefBody">A <strong>Psicologia da Gestalt</strong> surgiu na Alemanha no início do século XX. Seu princípio: "o todo é diferente da soma das partes". Aplicada ao design, explica como usuários agrupam informações, identificam hierarquias e percebem relações entre elementos visuais.</p>
+      <span class="ref-cite"><span data-i18n-html="gestaltRefCite">WERTHEIMER, M. Laws of organization in perceptual forms. In: ELLIS, W. D. (ed.). A source book of Gestalt psychology. Routledge, 1938.</span>
     </div>
     <div id="criteria-gestalt"></div>
   </div>
@@ -852,12 +848,12 @@
     <div class="framework-intro">
       <div class="icon">📊</div>
       <div>
-        <h2>Resultado da Avaliação</h2>
-        <p>Resumo consolidado com pontuações por framework e identificação dos pontos críticos.</p>
+        <h2 data-i18n="dashTitle">Resultado da Avaliação</h2>
+        <p data-i18n="dashDesc">Resumo consolidado com pontuações por framework e identificação dos pontos críticos.</p>
       </div>
     </div>
     <div class="info-box">
-      <strong>💡 Exportar CSV:</strong> Gera uma linha com e-mail, site, data e todas as pontuações. Abra no Excel ou Google Sheets para comparar avaliações.
+      <span data-i18n-html="dashCsvInfo"><strong>💡 Exportar CSV:</strong> Gera uma linha com e-mail, site, data e todas as pontuações. Abra no Excel ou Google Sheets para comparar avaliações.</span>
     </div>
     <div class="dashboard-grid" id="scorecards"></div>
     <div id="report-body"></div>
@@ -866,23 +862,23 @@
     <div class="ai-analysis-section" id="aiIndividualSection">
       <div class="ai-analysis-header">
         <div class="ai-analysis-title">
-          🤖 Análise Interpretativa <span class="ai-badge">Claude AI</span>
+          <span data-i18n="aiIndTitle">🤖 Análise Interpretativa</span> <span class="ai-badge">Claude AI</span>
         </div>
         <button class="ai-gen-btn" id="aiIndividualBtn" onclick="generateIndividualAnalysis()">
-          ✨ Gerar análise
+          <span data-i18n="aiIndGenBtn">✨ Gerar análise</span>
         </button>
       </div>
       <div class="ai-loading" id="aiIndividualLoading">
         <div class="ai-spinner"></div>
-        <span>Analisando os resultados da avaliação...</span>
+        <span data-i18n="aiIndLoading">Analisando os resultados da avaliação...</span>
       </div>
       <div class="ai-result" id="aiIndividualResult"></div>
       <div class="ai-error" id="aiIndividualError"></div>
     </div>
 
     <div class="btn-row">
-      <button class="export-btn btn-csv" onclick="exportCSV()">📥 Exportar CSV</button>
-      <button class="export-btn btn-txt" onclick="exportTXT()">📄 Exportar .txt</button>
+      <button class="export-btn btn-csv" onclick="exportCSV()" data-i18n="exportCsv">📥 Exportar CSV</button>
+      <button class="export-btn btn-txt" onclick="exportTXT()" data-i18n="exportTxt">📄 Exportar .txt</button>
     </div>
   </div>
 
@@ -891,14 +887,14 @@
     <div class="framework-intro">
       <div class="icon">🎓</div>
       <div>
-        <h2>Dashboard da Turma</h2>
-        <p>Visão consolidada das avaliações enviadas pelos alunos.</p>
+        <h2 data-i18n="classDashTitle">Dashboard da Turma</h2>
+        <p data-i18n="classDashDesc">Visão consolidada das avaliações enviadas pelos alunos.</p>
       </div>
     </div>
     <div class="class-dashboard" id="classDashboardContent">
       <div class="class-empty-state">
         <div class="icon">📭</div>
-        <p>Nenhuma avaliação enviada ainda.<br>Compartilhe o link com os alunos para começar.</p>
+        <p data-i18n-html="classEmpty">Nenhuma avaliação enviada ainda.<br>Compartilhe o link com os alunos para começar.</p>
       </div>
     </div>
   </div>
@@ -908,13 +904,13 @@
 <!-- ══════════════════ FOOTER ══════════════════ -->
 <footer>
   <p>
-    <strong>Avaliador UX/IHC</strong> · Instrumento pedagógico para avaliação heurística de interfaces<br>
+    <span data-i18n-html="footerMain"><strong>Avaliador UX/IHC</strong> · Instrumento pedagógico para avaliação heurística de interfaces<br>
     Desenvolvido por <strong>Profa. Dra. Danielle Pompeu Noronha Pontes</strong> · Universidade do Estado do Amazonas — UEA · Disciplina de IHC
   </p>
   <p style="margin-top:0.5rem; font-size:0.72rem; color:#3a3a55;">
     Nielsen (1994) · Bastien &amp; Scapin (1993) · W3C WCAG 2.1 (2018) · Wertheimer (1938)
   </p>
-  <p class="footer-disclaimer">
+  <p class="footer-disclaimer" data-i18n-html="footerDisclaimer">
     🤖 <strong>Disclaimer IA:</strong> Esta ferramenta foi desenvolvida com o auxílio do modelo de linguagem Claude (Anthropic, 2025).
     Os referenciais teóricos, critérios de avaliação e conteúdo científico foram revisados e validados pela autora.
     O uso de IA generativa é declarado em conformidade com os princípios de transparência científica e integridade acadêmica.
@@ -924,42 +920,42 @@
 <!-- ══════════════════ MODAL MODO TURMA ══════════════════ -->
 <div class="modal-overlay" id="classModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeClassModal()">✕ Fechar</button>
+    <button class="modal-close" onclick="closeClassModal()" data-i18n="modalClose">✕ Fechar</button>
 
     <!-- Passo 1: configurar -->
     <div id="classStep1">
-      <h2>🎓 Modo Turma</h2>
-      <p class="modal-sub">Configure uma sessão de avaliação para seus alunos.</p>
+      <h2 data-i18n="modalTitle">🎓 Modo Turma</h2>
+      <p class="modal-sub" data-i18n="modalSub">Configure uma sessão de avaliação para seus alunos.</p>
 
       <div class="modal-field">
-        <label>🌐 Site a ser avaliado</label>
-        <input type="text" id="classSiteInput" placeholder="www.exemplo.com.br" />
+        <label data-i18n="modalSiteLabel">🌐 Site a ser avaliado</label>
+        <input type="text" id="classSiteInput" placeholder="www.exemplo.com.br" data-i18n-placeholder="modalSitePlaceholder" />
       </div>
       <div class="modal-field">
-        <label>📝 Nome da turma / sessão</label>
-        <input type="text" id="classNameInput" placeholder="Ex: IHC 2025.1 — Grupo A" />
+        <label data-i18n="modalNameLabel">📝 Nome da turma / sessão</label>
+        <input type="text" id="classNameInput" placeholder="Ex: IHC 2025.1 — Grupo A" data-i18n-placeholder="modalNamePlaceholder" />
       </div>
 
       <div class="modal-btn-row">
-        <button class="modal-btn modal-btn-secondary" onclick="closeClassModal()">Cancelar</button>
-        <button class="modal-btn modal-btn-primary" onclick="createClassSession()">▶ Criar sessão e gerar link</button>
+        <button class="modal-btn modal-btn-secondary" onclick="closeClassModal()" data-i18n="modalCancel">Cancelar</button>
+        <button class="modal-btn modal-btn-primary" onclick="createClassSession()" data-i18n="modalCreate">▶ Criar sessão e gerar link</button>
       </div>
     </div>
 
     <!-- Passo 2: link gerado -->
     <div id="classStep2" style="display:none;">
-      <h2>✅ Sessão criada!</h2>
-      <p class="modal-sub">Compartilhe o link abaixo com seus alunos. Eles abrirão a ferramenta já configurada para avaliação.</p>
+      <h2 data-i18n="modalCreated">✅ Sessão criada!</h2>
+      <p class="modal-sub" data-i18n="modalCreatedSub">Compartilhe o link abaixo com seus alunos. Eles abrirão a ferramenta já configurada para avaliação.</p>
 
       <div class="modal-field">
-        <label>🔗 Link para os alunos (clique para copiar)</label>
+        <label data-i18n="modalLinkLabel">🔗 Link para os alunos (clique para copiar)</label>
         <div class="link-box" id="generatedLink" onclick="copyGeneratedLink()"></div>
-        <p class="copy-hint" id="copyHint">👆 Clique no link para copiar</p>
+        <p class="copy-hint" id="copyHint" data-i18n="modalCopyHint">👆 Clique no link para copiar</p>
       </div>
 
       <div class="modal-btn-row">
-        <button class="modal-btn modal-btn-secondary" onclick="closeClassModal()">Fechar</button>
-        <button class="modal-btn modal-btn-primary" onclick="openClassDashboard()">📊 Ver dashboard da turma</button>
+        <button class="modal-btn modal-btn-secondary" onclick="closeClassModal()" data-i18n="modalClose">Fechar</button>
+        <button class="modal-btn modal-btn-primary" onclick="openClassDashboard()" data-i18n="modalViewDash">📊 Ver dashboard da turma</button>
       </div>
     </div>
   </div>
@@ -971,94 +967,158 @@
 <!-- ══════════════════ SCRIPT ══════════════════ -->
 <script>
 // ─── IDIOMA ───────────────────────────────────────────────────────────────────
-let currentLang = 'pt';
+// Estratégia: idioma salvo em localStorage; botão alterna e recarrega a página.
+// Todos os textos estáticos usam data-i18n no HTML.
+// Textos dinâmicos usam t(key) em JS.
 
-const i18n = {
+const LANG_KEY = 'uxeval_lang';
+let currentLang = localStorage.getItem(LANG_KEY) || 'pt';
+
+// Atualiza botão imediatamente (antes de qualquer render)
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = currentLang === 'pt' ? '🌐 EN' : '🌐 PT';
+  applyDataI18n();
+});
+
+function toggleLang() {
+  const next = currentLang === 'pt' ? 'en' : 'pt';
+  localStorage.setItem(LANG_KEY, next);
+  location.reload();
+}
+
+// ── Strings dinâmicas (JS) ────────────────────────────────────────────────────
+const STRINGS = {
   pt: {
-    headerTitle: 'Avaliador',
-    headerTitleSpan: 'UX / IHC',
-    sessionActive: 'Sessão ativa',
-    // Header
+    ratingLabel: 'Avalie:',
+    notesPlaceholder: 'Observações, problemas encontrados, evidências...',
+    naBtnLabel: 'N/A',
+    starLabels: ['Péssimo','Ruim','Regular','Bom','Excelente'],
+    studentBanner: (name, site) => `<div class="icon">🎓</div><div class="info"><strong>Você está no Modo Aluno</strong><span>Sessão: ${name}</span></div><span class="site-label">🌐 ${site}</span>`,
+    submitTitle: '📤 Enviar Avaliação',
+    submitDesc: 'Quando terminar todas as heurísticas, clique para enviar ao professor.',
+    submitBtn: 'Enviar Avaliação',
+    submitSuccess: 'Avaliação enviada com sucesso!',
+    submitSuccessDesc: 'O professor poderá ver sua avaliação no dashboard da turma.',
+    aiClassTitle: '🤖 Análise Interpretativa da Turma',
+    aiLoading: 'Analisando os resultados da turma...',
+    aiGenBtn: '✨ Gerar análise',
+    refreshing: 'Atualizando...',
+    toastCopied: '🔗 Link copiado!',
+    toastSessionClosed: '✓ Sessão encerrada',
+    toastRefreshed: '✓ Dashboard atualizado',
+    toastNoEmail: '⚠️ Preencha seu e-mail antes de enviar!',
+    toastSent: '✅ Avaliação enviada!',
+    toastSending: 'Enviando...',
+    toastApiError: '⚠️ Erro ao criar sessão. Verifique a API.',
+    toastNoSite: '⚠️ Informe o site a ser avaliado',
+    toastNoCriteria: '⚠️ Avalie ao menos um critério antes de gerar a análise',
+    toastNoSubmissions: '⚠️ Sem avaliações para analisar',
+    toastNoExport: 'Sem avaliações para exportar',
+    classEmpty: 'Nenhuma avaliação enviada ainda.<br>Compartilhe o link com os alunos para começar.',
+    studentWarn: '⚠️ Preencha seu <strong>e-mail institucional</strong> antes de enviar a avaliação.',
+    pageTitle: 'Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA',
+    classSessionLabel: (name, site) => `${name || ''} · ${site}`,
+  },
+  en: {
+    ratingLabel: 'Rate:',
+    notesPlaceholder: 'Observations, issues found, evidence...',
+    naBtnLabel: 'N/A',
+    starLabels: ['Very Poor','Poor','Fair','Good','Excellent'],
+    studentBanner: (name, site) => `<div class="icon">🎓</div><div class="info"><strong>You are in Student Mode</strong><span>Session: ${name}</span></div><span class="site-label">🌐 ${site}</span>`,
+    submitTitle: '📤 Submit Evaluation',
+    submitDesc: 'When you finish all heuristics, click to submit to the professor.',
+    submitBtn: 'Submit Evaluation',
+    submitSuccess: 'Evaluation submitted successfully!',
+    submitSuccessDesc: 'The professor will be able to see your evaluation on the class dashboard.',
+    aiClassTitle: '🤖 Class Interpretive Analysis',
+    aiLoading: 'Analyzing class results...',
+    aiGenBtn: '✨ Generate analysis',
+    refreshing: 'Refreshing...',
+    toastCopied: '🔗 Link copied!',
+    toastSessionClosed: '✓ Session ended',
+    toastRefreshed: '✓ Dashboard updated',
+    toastNoEmail: '⚠️ Please fill in your email before submitting!',
+    toastSent: '✅ Evaluation submitted!',
+    toastSending: 'Submitting...',
+    toastApiError: '⚠️ Error creating session. Check the API.',
+    toastNoSite: '⚠️ Please provide the site to be evaluated',
+    toastNoCriteria: '⚠️ Rate at least one criterion before generating the analysis',
+    toastNoSubmissions: '⚠️ No evaluations to analyze',
+    toastNoExport: 'No evaluations to export',
+    classEmpty: 'No evaluations submitted yet.<br>Share the link with students to get started.',
+    studentWarn: '⚠️ Fill in your <strong>institutional email</strong> before submitting the evaluation.',
+    pageTitle: 'UX/HCI Evaluator — Prof. Dr. Danielle Pompeu — UEA',
+    classSessionLabel: (name, site) => `${name || ''} · ${site}`,
+  }
+};
+
+function t(key, ...args) {
+  const val = STRINGS[currentLang]?.[key] || STRINGS['pt'][key] || key;
+  return typeof val === 'function' ? val(...args) : val;
+}
+
+// ── data-i18n engine ──────────────────────────────────────────────────────────
+// Uso no HTML: <span data-i18n="key"></span>
+//              <input data-i18n-placeholder="key">
+//              <element data-i18n-html="key">  (innerHTML)
+const I18N_HTML = {
+  pt: {
     tagline: 'Avaliação heurística científica · Nielsen · Bastien & Scapin · WCAG 2.1 · Gestalt',
+    headerTitle: 'Avaliador',
+    headerSpan: 'UX / IHC',
     classModeBtn: '🎓 Modo Turma',
     studentBadge: '🎓 Modo Aluno · avaliação em andamento',
-    langBtnLabel: '🌐 EN',
-    // Tabs
     tabNielsen: '🎯 Nielsen',
     tabBastien: '🔬 Bastien & Scapin',
     tabWcag: '♿ WCAG',
     tabGestalt: '👁️ Gestalt',
     tabResult: '📊 Resultado',
     tabClass: '🎓 Turma',
-    // Fields
     labelEmail: '✉️ E-mail:',
-    placeholderEmail: 'seu@email.com',
     labelSite: '🌐 Site:',
+    placeholderEmail: 'seu@email.com',
     placeholderSite: 'www.exemplo.com.br',
-    // Framework intros
-    nielsenTitle: '10 Heurísticas de Nielsen',
-    nielsenDesc: 'Criadas por Jakob Nielsen em 1994, são os princípios mais utilizados em avaliações heurísticas no mundo.',
-    nielsenTag: 'Nielsen Norman Group · 1994',
+    nielsenFwTitle: '10 Heurísticas de Nielsen',
+    nielsenFwDesc: 'Criadas por Jakob Nielsen em 1994, são os princípios mais utilizados em avaliações heurísticas no mundo.',
+    nielsenFwTag: 'Nielsen Norman Group · 1994',
     nielsenRefTitle: '📚 Referencial Teórico',
     nielsenRefBody: 'A <strong>Avaliação Heurística</strong> é um método de inspeção de usabilidade proposto por Nielsen e Molich (1990) e consolidado por Nielsen (1994). Consiste em examinar a interface com base em princípios estabelecidos sem a participação direta de usuários finais.',
     nielsenRefCite: 'NIELSEN, J. Enhancing the explanatory power of usability heuristics. CHI, 1994.<br>NIELSEN, J.; MOLICH, R. Heuristic evaluation of user interfaces. CHI, 1990.',
-    bastienTitle: 'Critérios Ergonômicos de Bastien & Scapin',
-    bastienDesc: 'Desenvolvidos em 1993 pelo INRIA (França), estes 18 critérios oferecem análise granular da interface.',
-    bastienTag: 'INRIA · Bastien & Scapin · 1993',
+    bastienFwTitle: 'Critérios Ergonômicos de Bastien & Scapin',
+    bastienFwDesc: 'Desenvolvidos em 1993 pelo INRIA (França), estes 18 critérios oferecem análise granular da interface.',
+    bastienFwTag: 'INRIA · Bastien & Scapin · 1993',
     bastienRefTitle: '📚 Referencial Teórico',
     bastienRefBody: 'Os <strong>Critérios Ergonômicos</strong> de Bastien e Scapin foram desenvolvidos no INRIA como resultado de extensa revisão de literatura. Os 18 critérios estão organizados em 8 dimensões: Condução, Carga de Trabalho, Controle Explícito, Adaptabilidade, Gestão de Erros, Consistência, Significado dos Códigos e Compatibilidade.',
     bastienRefCite: 'BASTIEN, J. M. C.; SCAPIN, D. L. Ergonomic criteria for the evaluation of human-computer interfaces. Technical Report INRIA nº 156, 1993.',
-    wcagTitle: 'Diretrizes de Acessibilidade WCAG 2.1',
-    wcagDesc: 'Padrão internacional do W3C: Perceptível, Operável, Compreensível e Robusto (POUR).',
-    wcagTag: 'W3C · WCAG 2.1 · 2018',
+    wcagFwTitle: 'Diretrizes de Acessibilidade WCAG 2.1',
+    wcagFwDesc: 'Padrão internacional do W3C: Perceptível, Operável, Compreensível e Robusto (POUR).',
+    wcagFwTag: 'W3C · WCAG 2.1 · 2018',
     wcagRefTitle: '📚 Referencial Teórico',
     wcagRefBody: 'As <strong>WCAG</strong> são desenvolvidas pelo W3C/WAI. A versão 2.1 (2018) expande a anterior com critérios para dispositivos móveis, baixa visão e deficiências cognitivas. No Brasil, a acessibilidade digital é regulamentada pelo Decreto nº 5.296/2004 e pelo eMAG.',
     wcagRefCite: 'W3C. WCAG 2.1. W3C Recommendation, 05 June 2018. https://www.w3.org/TR/WCAG21/',
-    gestaltTitle: 'Princípios da Gestalt na Interface',
-    gestaltDesc: 'Leis da percepção visual da psicologia alemã. Explicam como o cérebro organiza elementos visuais.',
-    gestaltTag: 'Psicologia da Gestalt · Wertheimer · 1923',
+    gestaltFwTitle: 'Princípios da Gestalt na Interface',
+    gestaltFwDesc: 'Leis da percepção visual da psicologia alemã. Explicam como o cérebro organiza elementos visuais.',
+    gestaltFwTag: 'Psicologia da Gestalt · Wertheimer · 1923',
     gestaltRefTitle: '📚 Referencial Teórico',
     gestaltRefBody: 'A <strong>Psicologia da Gestalt</strong> surgiu na Alemanha no início do século XX. Seu princípio: "o todo é diferente da soma das partes". Aplicada ao design, explica como usuários agrupam informações, identificam hierarquias e percebem relações entre elementos visuais.',
     gestaltRefCite: 'WERTHEIMER, M. Laws of organization in perceptual forms. In: ELLIS, W. D. (ed.). A source book of Gestalt psychology. Routledge, 1938.',
-    // Scale legend
-    scalePoor: '0 = Péssimo',
-    scaleBad: '1 = Ruim',
-    scaleFair: '2 = Regular',
-    scaleGood: '3 = Bom',
-    scaleExcellent: '4 = Excelente',
-    scaleNA: 'N/A = Não se aplica',
-    scaleLabel: 'Pontuação:',
-    ratingLabel: 'Avalie:',
-    notesPlaceholder: 'Observações, problemas encontrados, evidências...',
-    naBtnLabel: 'N/A',
-    // Dashboard
+    scaleLegend: 'Pontuação:',
+    scale0: '0 = Péssimo', scale1: '1 = Ruim', scale2: '2 = Regular', scale3: '3 = Bom', scale4: '4 = Excelente', scaleNA: 'N/A = Não se aplica',
     dashTitle: 'Resultado da Avaliação',
     dashDesc: 'Resumo consolidado com pontuações por framework e identificação dos pontos críticos.',
     dashCsvInfo: '<strong>💡 Exportar CSV:</strong> Gera uma linha com e-mail, site, data e todas as pontuações. Abra no Excel ou Google Sheets para comparar avaliações.',
-    aiTitle: '🤖 Análise Interpretativa',
-    aiGenBtn: '✨ Gerar análise',
-    aiLoading: 'Analisando os resultados da avaliação...',
+    aiIndTitle: '🤖 Análise Interpretativa',
+    aiIndGenBtn: '✨ Gerar análise',
+    aiIndLoading: 'Analisando os resultados da avaliação...',
     exportCsv: '📥 Exportar CSV',
     exportTxt: '📄 Exportar .txt',
-    // Class dashboard
     classDashTitle: 'Dashboard da Turma',
     classDashDesc: 'Visão consolidada das avaliações enviadas pelos alunos.',
-    classEmpty: 'Nenhuma avaliação enviada ainda.<br>Compartilhe o link com os alunos para começar.',
-    aiClassTitle: '🤖 Análise Interpretativa da Turma',
-    aiClassLoading: 'Analisando os resultados da turma...',
-    // Action bar
     copyLinkBtn: '🔗 Copiar link dos alunos',
     viewDashBtn: '📊 Ver dashboard da turma',
     refreshBtn: '🔄 Atualizar',
     closeSessionBtn: '✕ Encerrar sessão',
-    // Submit section
-    submitTitle: '📤 Enviar Avaliação',
-    submitDesc: 'Quando terminar todas as heurísticas, clique para enviar ao professor.',
-    submitBtn: 'Enviar Avaliação',
-    submitSuccess: 'Avaliação enviada com sucesso!',
-    submitSuccessDesc: 'O professor poderá ver sua avaliação no dashboard da turma.',
-    studentWarn: '⚠️ Preencha seu <strong>e-mail institucional</strong> antes de enviar a avaliação.',
-    // Modal
     modalTitle: '🎓 Modo Turma',
     modalSub: 'Configure uma sessão de avaliação para seus alunos.',
     modalSiteLabel: '🌐 Site a ser avaliado',
@@ -1073,31 +1133,15 @@ const i18n = {
     modalCopyHint: '👆 Clique no link para copiar',
     modalClose: 'Fechar',
     modalViewDash: '📊 Ver dashboard da turma',
-    modalCloseBtn: '✕ Fechar',
-    // Footer
-    footerMain: '<strong>Avaliador UX/IHC</strong> · Instrumento pedagógico para avaliação heurística de interfaces<br>Desenvolvido por <strong>Profa. Dra. Danielle Pompeu Noronha Pontes</strong> · Universidade do Estado do Amazonas — UEA · Disciplina de IHC',
+    footerMain: '<span data-i18n-html="footerMain"><strong>Avaliador UX/IHC</strong> · Instrumento pedagógico para avaliação heurística de interfaces<br>Desenvolvido por <strong>Profa. Dra. Danielle Pompeu Noronha Pontes</strong> · Universidade do Estado do Amazonas — UEA · Disciplina de IHC',
     footerDisclaimer: '🤖 <strong>Disclaimer IA:</strong> Esta ferramenta foi desenvolvida com o auxílio do modelo de linguagem Claude (Anthropic, 2025). Os referenciais teóricos, critérios de avaliação e conteúdo científico foram revisados e validados pela autora. O uso de IA generativa é declarado em conformidade com os princípios de transparência científica e integridade acadêmica.',
-    // Toasts
-    toastCopied: '🔗 Link copiado!',
-    toastSessionClosed: '✓ Sessão encerrada',
-    toastRefreshed: '✓ Dashboard atualizado',
-    toastNoEmail: '⚠️ Preencha seu e-mail antes de enviar!',
-    toastSent: '✅ Avaliação enviada!',
-    toastSending: 'Enviando...',
-    toastApiError: '⚠️ Erro ao criar sessão. Verifique a API.',
-    toastNoSite: '⚠️ Informe o site a ser avaliado',
-    toastNoCriteria: '⚠️ Avalie ao menos um critério antes de gerar a análise',
-    toastNoSubmissions: '⚠️ Sem avaliações para analisar',
-    toastNoExport: 'Sem avaliações para exportar',
   },
   en: {
-    headerTitle: 'Evaluator',
-    headerTitleSpan: 'UX / HCI',
-    sessionActive: 'Active session',
     tagline: 'Scientific heuristic evaluation · Nielsen · Bastien & Scapin · WCAG 2.1 · Gestalt',
+    headerTitle: 'Evaluator',
+    headerSpan: 'UX / HCI',
     classModeBtn: '🎓 Class Mode',
     studentBadge: '🎓 Student Mode · evaluation in progress',
-    langBtnLabel: '🌐 PT',
     tabNielsen: '🎯 Nielsen',
     tabBastien: '🔬 Bastien & Scapin',
     tabWcag: '♿ WCAG',
@@ -1105,66 +1149,49 @@ const i18n = {
     tabResult: '📊 Results',
     tabClass: '🎓 Class',
     labelEmail: '✉️ Email:',
-    placeholderEmail: 'your@email.com',
     labelSite: '🌐 Site:',
+    placeholderEmail: 'your@email.com',
     placeholderSite: 'www.example.com',
-    nielsenTitle: "Nielsen's 10 Usability Heuristics",
-    nielsenDesc: 'Created by Jakob Nielsen in 1994, these are the most widely used principles in heuristic evaluations worldwide.',
-    nielsenTag: 'Nielsen Norman Group · 1994',
+    nielsenFwTitle: "Nielsen's 10 Usability Heuristics",
+    nielsenFwDesc: 'Created by Jakob Nielsen in 1994, these are the most widely used principles in heuristic evaluations worldwide.',
+    nielsenFwTag: 'Nielsen Norman Group · 1994',
     nielsenRefTitle: '📚 Theoretical Background',
     nielsenRefBody: '<strong>Heuristic Evaluation</strong> is a usability inspection method proposed by Nielsen and Molich (1990) and consolidated by Nielsen (1994). It involves examining the interface based on established principles without direct end-user participation.',
     nielsenRefCite: 'NIELSEN, J. Enhancing the explanatory power of usability heuristics. CHI, 1994.<br>NIELSEN, J.; MOLICH, R. Heuristic evaluation of user interfaces. CHI, 1990.',
-    bastienTitle: 'Bastien & Scapin Ergonomic Criteria',
-    bastienDesc: 'Developed in 1993 by INRIA (France), these 18 criteria offer granular interface analysis.',
-    bastienTag: 'INRIA · Bastien & Scapin · 1993',
+    bastienFwTitle: 'Bastien & Scapin Ergonomic Criteria',
+    bastienFwDesc: 'Developed in 1993 by INRIA (France), these 18 criteria offer granular interface analysis.',
+    bastienFwTag: 'INRIA · Bastien & Scapin · 1993',
     bastienRefTitle: '📚 Theoretical Background',
     bastienRefBody: 'The <strong>Ergonomic Criteria</strong> by Bastien and Scapin were developed at INRIA as a result of extensive literature review. The 18 criteria are organized into 8 dimensions: Guidance, Workload, Explicit Control, Adaptability, Error Management, Consistency, Significance of Codes, and Compatibility.',
     bastienRefCite: 'BASTIEN, J. M. C.; SCAPIN, D. L. Ergonomic criteria for the evaluation of human-computer interfaces. Technical Report INRIA nº 156, 1993.',
-    wcagTitle: 'WCAG 2.1 Web Accessibility Guidelines',
-    wcagDesc: 'International W3C standard: Perceivable, Operable, Understandable and Robust (POUR).',
-    wcagTag: 'W3C · WCAG 2.1 · 2018',
+    wcagFwTitle: 'WCAG 2.1 Web Accessibility Guidelines',
+    wcagFwDesc: 'International W3C standard: Perceivable, Operable, Understandable and Robust (POUR).',
+    wcagFwTag: 'W3C · WCAG 2.1 · 2018',
     wcagRefTitle: '📚 Theoretical Background',
     wcagRefBody: '<strong>WCAG</strong> is developed by W3C/WAI. Version 2.1 (2018) extends the previous version with criteria for mobile devices, low vision, and cognitive disabilities.',
     wcagRefCite: 'W3C. WCAG 2.1. W3C Recommendation, 05 June 2018. https://www.w3.org/TR/WCAG21/',
-    gestaltTitle: 'Gestalt Principles in Interface Design',
-    gestaltDesc: 'Laws of visual perception from German psychology. Explain how the brain organizes visual elements.',
-    gestaltTag: 'Gestalt Psychology · Wertheimer · 1923',
+    gestaltFwTitle: 'Gestalt Principles in Interface Design',
+    gestaltFwDesc: 'Laws of visual perception from German psychology. Explain how the brain organizes visual elements.',
+    gestaltFwTag: 'Gestalt Psychology · Wertheimer · 1923',
     gestaltRefTitle: '📚 Theoretical Background',
     gestaltRefBody: '<strong>Gestalt Psychology</strong> emerged in Germany in the early 20th century. Its principle: "the whole is different from the sum of its parts." Applied to design, it explains how users group information, identify hierarchies, and perceive relationships between visual elements.',
     gestaltRefCite: 'WERTHEIMER, M. Laws of organization in perceptual forms. In: ELLIS, W. D. (ed.). A source book of Gestalt psychology. Routledge, 1938.',
-    scalePoor: '0 = Very Poor',
-    scaleBad: '1 = Poor',
-    scaleFair: '2 = Fair',
-    scaleGood: '3 = Good',
-    scaleExcellent: '4 = Excellent',
-    scaleNA: 'N/A = Not applicable',
-    scaleLabel: 'Score:',
-    ratingLabel: 'Rate:',
-    notesPlaceholder: 'Observations, issues found, evidence...',
-    naBtnLabel: 'N/A',
+    scaleLegend: 'Score:',
+    scale0: '0 = Very Poor', scale1: '1 = Poor', scale2: '2 = Fair', scale3: '3 = Good', scale4: '4 = Excellent', scaleNA: 'N/A = Not applicable',
     dashTitle: 'Evaluation Results',
     dashDesc: 'Consolidated summary with scores by framework and identification of critical points.',
     dashCsvInfo: '<strong>💡 Export CSV:</strong> Generates a row with email, site, date and all scores. Open in Excel or Google Sheets to compare evaluations.',
-    aiTitle: '🤖 Interpretive Analysis',
-    aiGenBtn: '✨ Generate analysis',
-    aiLoading: 'Analyzing evaluation results...',
+    aiIndTitle: '🤖 Interpretive Analysis',
+    aiIndGenBtn: '✨ Generate analysis',
+    aiIndLoading: 'Analyzing evaluation results...',
     exportCsv: '📥 Export CSV',
     exportTxt: '📄 Export .txt',
     classDashTitle: 'Class Dashboard',
     classDashDesc: 'Consolidated view of evaluations submitted by students.',
-    classEmpty: 'No evaluations submitted yet.<br>Share the link with students to get started.',
-    aiClassTitle: '🤖 Class Interpretive Analysis',
-    aiClassLoading: 'Analyzing class results...',
     copyLinkBtn: '🔗 Copy student link',
     viewDashBtn: '📊 View class dashboard',
     refreshBtn: '🔄 Refresh',
     closeSessionBtn: '✕ End session',
-    submitTitle: '📤 Submit Evaluation',
-    submitDesc: 'When you finish all heuristics, click to submit to the professor.',
-    submitBtn: 'Submit Evaluation',
-    submitSuccess: 'Evaluation submitted successfully!',
-    submitSuccessDesc: 'The professor will be able to see your evaluation on the class dashboard.',
-    studentWarn: '⚠️ Fill in your <strong>institutional email</strong> before submitting the evaluation.',
     modalTitle: '🎓 Class Mode',
     modalSub: 'Set up an evaluation session for your students.',
     modalSiteLabel: '🌐 Site to be evaluated',
@@ -1179,382 +1206,194 @@ const i18n = {
     modalCopyHint: '👆 Click the link to copy',
     modalClose: 'Close',
     modalViewDash: '📊 View class dashboard',
-    modalCloseBtn: '✕ Close',
     footerMain: '<strong>UX/HCI Evaluator</strong> · Pedagogical tool for heuristic interface evaluation<br>Developed by <strong>Prof. Dr. Danielle Pompeu Noronha Pontes</strong> · State University of Amazonas — UEA · HCI Course',
     footerDisclaimer: '🤖 <strong>AI Disclaimer:</strong> This tool was developed with the assistance of the Claude language model (Anthropic, 2025). Theoretical references, evaluation criteria, and scientific content were reviewed and validated by the author. The use of generative AI is declared in compliance with the principles of scientific transparency and academic integrity.',
-    toastCopied: '🔗 Link copied!',
-    toastSessionClosed: '✓ Session ended',
-    toastRefreshed: '✓ Dashboard updated',
-    toastNoEmail: '⚠️ Please fill in your email before submitting!',
-    toastSent: '✅ Evaluation submitted!',
-    toastSending: 'Submitting...',
-    toastApiError: '⚠️ Error creating session. Check the API.',
-    toastNoSite: '⚠️ Please provide the site to be evaluated',
-    toastNoCriteria: '⚠️ Rate at least one criterion before generating the analysis',
-    toastNoSubmissions: '⚠️ No evaluations to analyze',
-    toastNoExport: 'No evaluations to export',
   }
 };
 
-function t(key) { return i18n[currentLang][key] || i18n['pt'][key] || key; }
-
-function toggleLang() {
-  currentLang = currentLang === 'pt' ? 'en' : 'pt';
-  applyLang();
-}
-
-function applyLang() {
-  const L = i18n[currentLang];
-  document.getElementById('langBtn').textContent = L.langBtnLabel;
-
-  // H1
-  const headerTitleEl = document.getElementById('headerTitle');
-  if (headerTitleEl) {
-    headerTitleEl.childNodes[0].textContent = L.headerTitle + ' ';
-    document.getElementById('headerTitleSpan').textContent = L.headerTitleSpan;
-  }
-
-  document.querySelector('header p.tagline').textContent = L.tagline;
-  document.getElementById('classModeBtnHeader').textContent = L.classModeBtn;
-  document.getElementById('studentRoleBadge').textContent = L.studentBadge;
-
-  // Action bar buttons (by id)
-  const copyLinkBtn = document.getElementById('copyLinkBtn');
-  if (copyLinkBtn) copyLinkBtn.textContent = L.copyLinkBtn;
-  const viewDashBtn = document.getElementById('viewDashBtn');
-  if (viewDashBtn) viewDashBtn.textContent = L.viewDashBtn;
-  const refreshBtnEl = document.getElementById('refreshBtn');
-  if (refreshBtnEl && !refreshBtnEl.classList.contains('refreshing')) refreshBtnEl.textContent = L.refreshBtn;
-  const closeSessionBtnEl = document.getElementById('closeSessionBtn');
-  if (closeSessionBtnEl) closeSessionBtnEl.textContent = L.closeSessionBtn;
-
-  // Tabs
-  const tabs = document.querySelectorAll('.tab[data-tab]');
-  const tabKeys = ['tabNielsen','tabBastien','tabWcag','tabGestalt','tabResult','tabClass'];
-  tabs.forEach((tab, i) => {
-    if (tabKeys[i]) {
-      // preserve the dot div
-      const dot = tab.querySelector('.tab-dot');
-      tab.textContent = L[tabKeys[i]];
-      if (dot) tab.insertBefore(dot, tab.firstChild);
-    }
+function applyDataI18n() {
+  const L = I18N_HTML[currentLang];
+  // data-i18n → textContent
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (L[key] !== undefined) el.textContent = L[key];
   });
-
-  // Fields
-  const emailLabel = document.querySelector('#projectBar .project-field:nth-child(1) label');
-  const emailInput = document.getElementById('evaluatorEmail');
-  const siteLabel  = document.querySelector('#projectBar .project-field:nth-child(2) label');
-  const siteInput  = document.getElementById('projectName');
-  if (emailLabel) emailLabel.textContent = L.labelEmail;
-  if (emailInput) emailInput.placeholder = L.placeholderEmail;
-  if (siteLabel)  siteLabel.textContent  = L.labelSite;
-  if (siteInput && !siteInput.disabled)  siteInput.placeholder  = L.placeholderSite;
-
-  // Framework intros
-  const fwMap = [
-    { sec: 'nielsen', title: 'nielsenTitle', desc: 'nielsenDesc', tag: 'nielsenTag', refTitle: 'nielsenRefTitle', refBody: 'nielsenRefBody', refCite: 'nielsenRefCite' },
-    { sec: 'bastien', title: 'bastienTitle', desc: 'bastienDesc', tag: 'bastienTag', refTitle: 'bastienRefTitle', refBody: 'bastienRefBody', refCite: 'bastienRefCite' },
-    { sec: 'wcag',    title: 'wcagTitle',    desc: 'wcagDesc',    tag: 'wcagTag',    refTitle: 'wcagRefTitle',    refBody: 'wcagRefBody',    refCite: 'wcagRefCite' },
-    { sec: 'gestalt', title: 'gestaltTitle', desc: 'gestaltDesc', tag: 'gestaltTag', refTitle: 'gestaltRefTitle', refBody: 'gestaltRefBody', refCite: 'gestaltRefCite' },
-  ];
-  fwMap.forEach(fw => {
-    const sec = document.getElementById(`section-${fw.sec}`);
-    if (!sec) return;
-    const intro = sec.querySelector('.framework-intro div:last-child');
-    if (intro) {
-      intro.querySelector('h2').textContent = L[fw.title];
-      intro.querySelector('p').textContent  = L[fw.desc];
-      intro.querySelector('.tag').textContent = L[fw.tag];
-    }
-    const refBox = sec.querySelector('.ref-box');
-    if (refBox) {
-      refBox.querySelector('h4').textContent  = L[fw.refTitle];
-      refBox.querySelector('p').innerHTML     = L[fw.refBody];
-      refBox.querySelector('.ref-cite').innerHTML = L[fw.refCite];
-    }
-    // Scale legend (only Nielsen has it)
-    const legend = sec.querySelector('.severity-legend');
-    if (legend) {
-      const spans = legend.querySelectorAll('.sev-item');
-      const keys = ['scalePoor','scaleBad','scaleFair','scaleGood','scaleExcellent','scaleNA'];
-      spans.forEach((item, i) => {
-        const dot = item.querySelector('.sev-dot');
-        item.textContent = L[keys[i]];
-        if (dot) item.insertBefore(dot, item.firstChild);
-      });
-      legend.querySelector('span:first-child').textContent = L.scaleLabel;
-    }
-    // Rating labels and notes placeholders inside criteria
-    sec.querySelectorAll('.rating-label').forEach(el => el.textContent = L.ratingLabel);
-    sec.querySelectorAll('.notes-area').forEach(el => el.placeholder = L.notesPlaceholder);
-    sec.querySelectorAll('.na-btn').forEach(el => {
-      if (!el.classList.contains('selected')) el.textContent = L.naBtnLabel;
-    });
+  // data-i18n-html → innerHTML
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.dataset.i18nHtml;
+    if (L[key] !== undefined) el.innerHTML = L[key];
   });
-
-  // Individual dashboard
-  const dashSec = document.getElementById('section-dashboard');
-  if (dashSec) {
-    const intro = dashSec.querySelector('.framework-intro div:last-child');
-    if (intro) {
-      intro.querySelector('h2').textContent = L.dashTitle;
-      intro.querySelector('p').textContent  = L.dashDesc;
-    }
-    const infoBox = dashSec.querySelector('.info-box');
-    if (infoBox) infoBox.innerHTML = L.dashCsvInfo;
-    const aiTitle = dashSec.querySelector('.ai-analysis-title');
-    if (aiTitle) aiTitle.innerHTML = L.aiTitle + ' <span class="ai-badge">Claude AI</span>';
-    const aiBtn = document.getElementById('aiIndividualBtn');
-    if (aiBtn && !aiBtn.disabled) aiBtn.textContent = L.aiGenBtn;
-    const aiLoad = document.getElementById('aiIndividualLoading');
-    if (aiLoad) aiLoad.querySelector('span').textContent = L.aiLoading;
-    const csvBtn = dashSec.querySelector('.btn-csv');
-    if (csvBtn) csvBtn.textContent = L.exportCsv;
-    const txtBtn = dashSec.querySelector('.btn-txt');
-    if (txtBtn) txtBtn.textContent = L.exportTxt;
-  }
-
-  // Class dashboard section
-  const classDashSec = document.getElementById('section-class-dashboard');
-  if (classDashSec) {
-    const intro = classDashSec.querySelector('.framework-intro div:last-child');
-    if (intro) {
-      intro.querySelector('h2').textContent = L.classDashTitle;
-      intro.querySelector('p').textContent  = L.classDashDesc;
-    }
-    const empty = classDashSec.querySelector('.class-empty-state p');
-    if (empty) empty.innerHTML = L.classEmpty;
-  }
-
-  // Submit section (if present)
-  const submitSection = document.getElementById('submitSection');
-  if (submitSection) {
-    const h3 = submitSection.querySelector('h3');
-    if (h3) h3.textContent = L.submitTitle;
-    const p = submitSection.querySelector('#submitForm p');
-    if (p) p.textContent = L.submitDesc;
-    const btn = submitSection.querySelector('.submit-btn');
-    if (btn && !btn.disabled) btn.textContent = L.submitBtn;
-    const successStrong = submitSection.querySelector('.submit-success strong');
-    if (successStrong) successStrong.textContent = L.submitSuccess;
-    const successP = submitSection.querySelector('.submit-success p');
-    if (successP) successP.textContent = L.submitSuccessDesc;
-  }
-
-  // Student warning
-  const warn = document.querySelector('.student-name-required');
-  if (warn) warn.innerHTML = L.studentWarn;
-
-  // Modal
-  document.querySelector('.modal-close').textContent = L.modalCloseBtn;
-  document.querySelector('#classStep1 h2').textContent = L.modalTitle;
-  document.querySelector('#classStep1 .modal-sub').textContent = L.modalSub;
-  document.querySelector('label[for="classSiteInput"], #classStep1 .modal-field:nth-child(1) label').textContent = L.modalSiteLabel;
-  document.getElementById('classSiteInput').placeholder = L.modalSitePlaceholder;
-  document.querySelector('label[for="classNameInput"], #classStep1 .modal-field:nth-child(2) label').textContent = L.modalNameLabel;
-  document.getElementById('classNameInput').placeholder = L.modalNamePlaceholder;
-  const step1Btns = document.querySelectorAll('#classStep1 .modal-btn');
-  if (step1Btns[0]) step1Btns[0].textContent = L.modalCancel;
-  if (step1Btns[1]) step1Btns[1].textContent = L.modalCreate;
-  document.querySelector('#classStep2 h2').textContent = L.modalCreated;
-  document.querySelector('#classStep2 .modal-sub').textContent = L.modalCreatedSub;
-  const step2Label = document.querySelector('#classStep2 .modal-field label');
-  if (step2Label) step2Label.textContent = L.modalLinkLabel;
-  document.getElementById('copyHint').textContent = L.modalCopyHint;
-  const step2Btns = document.querySelectorAll('#classStep2 .modal-btn');
-  if (step2Btns[0]) step2Btns[0].textContent = L.modalClose;
-  if (step2Btns[1]) step2Btns[1].textContent = L.modalViewDash;
-
-  // Footer
-  document.querySelector('footer p:first-child').innerHTML = L.footerMain;
-  document.querySelector('footer .footer-disclaimer').innerHTML = L.footerDisclaimer;
-
+  // data-i18n-placeholder → placeholder
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.dataset.i18nPlaceholder;
+    if (L[key] !== undefined) el.placeholder = L[key];
+  });
   // Page title
   document.title = currentLang === 'en'
     ? 'UX/HCI Evaluator — Prof. Dr. Danielle Pompeu — UEA'
     : 'Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA';
-
-  // Rebuild all criteria with translated text
-  ['nielsen','bastien','wcag','gestalt'].forEach(rebuildCriteria);
+  // Lang button
+  const btn = document.getElementById('langBtn');
+  if (btn) btn.textContent = currentLang === 'pt' ? '🌐 EN' : '🌐 PT';
 }
 
-// ─── DADOS ────────────────────────────────────────────────────────────────────
+// ─── DADOS (PT + EN por item) ─────────────────────────────────────────────────
+
 const DATA = {
   nielsen: { color:'#7c6af7', items:[
-    {id:'n1',num:'H01',title:'Visibilidade do Status do Sistema',subtitle:'O sistema sempre informa os usuários sobre o que está acontecendo, com feedback adequado em tempo razoável.',good:['Barra de progresso ao fazer upload','Animação de carregamento visível','"Enviado com sucesso!" após formulário'],bad:['Botão sem nenhum retorno ao clicar','Formulário que some sem mensagem de confirmação']},
-    {id:'n2',num:'H02',title:'Correspondência entre Sistema e Mundo Real',subtitle:'O sistema usa linguagem familiar ao usuário — palavras e conceitos do mundo real, não jargão técnico.',good:['Ícone de lixeira para deletar','Linguagem em português claro'],bad:['"HTTP 403 Forbidden" como mensagem de erro','Siglas técnicas sem explicação']},
-    {id:'n3',num:'H03',title:'Controle e Liberdade do Usuário',subtitle:'Usuários precisam de saídas de emergência claramente marcadas. Suporte a desfazer e refazer.',good:['Botão "Cancelar" bem visível','Ctrl+Z funcional','Fechar modal com Esc'],bad:['Sem botão de voltar','Ação irreversível sem confirmação']},
-    {id:'n4',num:'H04',title:'Consistência e Padrões',subtitle:'Seguir convenções da plataforma. Mesma palavra deve sempre significar a mesma coisa.',good:['Botões com estilo consistente em todo o site','Mesmo vocabulário em todos os fluxos'],bad:['Botão "Salvar" às vezes verde, às vezes azul']},
-    {id:'n5',num:'H05',title:'Prevenção de Erros',subtitle:'Design cuidadoso que previne problemas antes que ocorram.',good:['Validação em tempo real no formulário','Confirmar antes de ação crítica'],bad:['Campo de data sem indicação do formato']},
-    {id:'n6',num:'H06',title:'Reconhecimento em Vez de Memorização',subtitle:'Minimizar a carga de memória do usuário. Objetos e ações devem estar visíveis.',good:['Menu sempre visível','Breadcrumb de navegação'],bad:['Atalhos de teclado sem indicação visual']},
-    {id:'n7',num:'H07',title:'Flexibilidade e Eficiência de Uso',subtitle:'Aceleradores para usuários experientes. Interface funciona para iniciantes e experts.',good:['Atalhos de teclado documentados','Filtros avançados'],bad:['Sem atalhos de teclado']},
-    {id:'n8',num:'H08',title:'Estética e Design Minimalista',subtitle:'Não incluir informação irrelevante. Cada elemento extra compete com os relevantes.',good:['Layout limpo com hierarquia clara','Sem pop-ups desnecessários'],bad:['Página cheia de banners','Informações não relacionadas misturadas']},
-    {id:'n9',num:'H09',title:'Ajuda ao Reconhecimento e Recuperação de Erros',subtitle:'Mensagens de erro em linguagem simples, que indicam o problema e sugerem solução.',good:['"E-mail inválido — use nome@dominio.com"','Campo com erro destacado em vermelho'],bad:['"Erro 500"','"Operação não permitida" sem contexto']},
-    {id:'n10',num:'H10',title:'Ajuda e Documentação',subtitle:'Embora melhor sem necessidade de ajuda, o sistema deve tê-la disponível e facilmente acessível.',good:['FAQ acessível em 1 clique','Tooltips em funções complexas'],bad:['Documentação inexistente ou difícil de encontrar']}
+    {id:'n1',num:'H01',
+     pt:{title:'Visibilidade do Status do Sistema',subtitle:'O sistema sempre informa os usuários sobre o que está acontecendo, com feedback adequado em tempo razoável.',good:['Barra de progresso ao fazer upload','Animação de carregamento visível','"Enviado com sucesso!" após formulário'],bad:['Botão sem nenhum retorno ao clicar','Formulário que some sem mensagem de confirmação']},
+     en:{title:'Visibility of System Status',subtitle:'The system always keeps users informed about what is going on, with appropriate feedback within reasonable time.',good:['Progress bar during upload','Visible loading animation','"Submitted successfully!" after form'],bad:['Button with no feedback when clicked','Form disappears without confirmation']}},
+    {id:'n2',num:'H02',
+     pt:{title:'Correspondência entre Sistema e Mundo Real',subtitle:'O sistema usa linguagem familiar ao usuário — palavras e conceitos do mundo real, não jargão técnico.',good:['Ícone de lixeira para deletar','Linguagem em português claro'],bad:['"HTTP 403 Forbidden" como mensagem de erro','Siglas técnicas sem explicação']},
+     en:{title:'Match Between System and the Real World',subtitle:'The system speaks the user\'s language — words and concepts familiar to users, not system-oriented jargon.',good:['Trash icon for delete','Clear plain language'],bad:['"HTTP 403 Forbidden" as error message','Unexplained technical acronyms']}},
+    {id:'n3',num:'H03',
+     pt:{title:'Controle e Liberdade do Usuário',subtitle:'Usuários precisam de saídas de emergência claramente marcadas. Suporte a desfazer e refazer.',good:['Botão "Cancelar" bem visível','Ctrl+Z funcional','Fechar modal com Esc'],bad:['Sem botão de voltar','Ação irreversível sem confirmação']},
+     en:{title:'User Control and Freedom',subtitle:'Users need clearly marked emergency exits. Support undo and redo.',good:['Visible "Cancel" button','Ctrl+Z works','Close modal with Esc'],bad:['No back button','Irreversible action without confirmation']}},
+    {id:'n4',num:'H04',
+     pt:{title:'Consistência e Padrões',subtitle:'Seguir convenções da plataforma. Mesma palavra deve sempre significar a mesma coisa.',good:['Botões com estilo consistente em todo o site','Mesmo vocabulário em todos os fluxos'],bad:['Botão "Salvar" às vezes verde, às vezes azul']},
+     en:{title:'Consistency and Standards',subtitle:'Follow platform conventions. The same word should always mean the same thing.',good:['Consistent button style throughout','Same vocabulary across all flows'],bad:['"Save" button sometimes green, sometimes blue']}},
+    {id:'n5',num:'H05',
+     pt:{title:'Prevenção de Erros',subtitle:'Design cuidadoso que previne problemas antes que ocorram.',good:['Validação em tempo real no formulário','Confirmar antes de ação crítica'],bad:['Campo de data sem indicação do formato']},
+     en:{title:'Error Prevention',subtitle:'Careful design that prevents problems from occurring in the first place.',good:['Real-time form validation','Confirm before critical action'],bad:['Date field without format indication']}},
+    {id:'n6',num:'H06',
+     pt:{title:'Reconhecimento em Vez de Memorização',subtitle:'Minimizar a carga de memória do usuário. Objetos e ações devem estar visíveis.',good:['Menu sempre visível','Breadcrumb de navegação'],bad:['Atalhos de teclado sem indicação visual']},
+     en:{title:'Recognition Rather Than Recall',subtitle:'Minimize the user\'s memory load. Objects and actions should be visible.',good:['Always-visible menu','Breadcrumb navigation'],bad:['Keyboard shortcuts with no visual hint']}},
+    {id:'n7',num:'H07',
+     pt:{title:'Flexibilidade e Eficiência de Uso',subtitle:'Aceleradores para usuários experientes. Interface funciona para iniciantes e experts.',good:['Atalhos de teclado documentados','Filtros avançados'],bad:['Sem atalhos de teclado']},
+     en:{title:'Flexibility and Efficiency of Use',subtitle:'Accelerators for experienced users. Interface works for both novices and experts.',good:['Documented keyboard shortcuts','Advanced filters'],bad:['No keyboard shortcuts available']}},
+    {id:'n8',num:'H08',
+     pt:{title:'Estética e Design Minimalista',subtitle:'Não incluir informação irrelevante. Cada elemento extra compete com os relevantes.',good:['Layout limpo com hierarquia clara','Sem pop-ups desnecessários'],bad:['Página cheia de banners','Informações não relacionadas misturadas']},
+     en:{title:'Aesthetic and Minimalist Design',subtitle:'Do not include irrelevant information. Every extra element competes with relevant ones.',good:['Clean layout with clear hierarchy','No unnecessary pop-ups'],bad:['Page full of banners','Unrelated information mixed together']}},
+    {id:'n9',num:'H09',
+     pt:{title:'Ajuda ao Reconhecimento e Recuperação de Erros',subtitle:'Mensagens de erro em linguagem simples, que indicam o problema e sugerem solução.',good:['"E-mail inválido — use nome@dominio.com"','Campo com erro destacado em vermelho'],bad:['"Erro 500"','"Operação não permitida" sem contexto']},
+     en:{title:'Help Users Recognize, Diagnose, and Recover from Errors',subtitle:'Error messages in plain language, indicating the problem and suggesting a solution.',good:['"Invalid email — use name@domain.com"','Error field highlighted in red'],bad:['"Error 500"','"Operation not allowed" without context']}},
+    {id:'n10',num:'H10',
+     pt:{title:'Ajuda e Documentação',subtitle:'Embora melhor sem necessidade de ajuda, o sistema deve tê-la disponível e facilmente acessível.',good:['FAQ acessível em 1 clique','Tooltips em funções complexas'],bad:['Documentação inexistente ou difícil de encontrar']},
+     en:{title:'Help and Documentation',subtitle:'Even though it is better if the system can be used without documentation, help should be easily accessible.',good:['FAQ accessible in 1 click','Tooltips on complex features'],bad:['Nonexistent or hard-to-find documentation']}}
   ]},
   bastien: { color:'#f7a26a', items:[
-    {id:'b1',num:'B01',title:'Presteza',subtitle:'Fornecer informações suficientes para guiar o usuário em suas ações.',good:['Labels descritivos em todos os campos','Instruções antes de formulários complexos'],bad:['Campos sem label ou com label ambíguo']},
-    {id:'b2',num:'B02',title:'Agrupamento e Distinção por Localização',subtitle:'Itens relacionados próximos; itens distintos separados visualmente.',good:['Configurações agrupadas por categoria','Seções bem delimitadas'],bad:['Campos relacionados espalhados pela tela']},
-    {id:'b3',num:'B03',title:'Agrupamento e Distinção por Formato',subtitle:'Usar cores, formas e tipografia para distinguir categorias.',good:['Alertas em cores distintas','Ícones diferenciados por tipo'],bad:['Erros e avisos com visual idêntico']},
-    {id:'b4',num:'B04',title:'Feedback Imediato',subtitle:'O sistema responde rapidamente a toda ação do usuário.',good:['Confirmação visual ao salvar','Spinner visível durante operações'],bad:['Ação sem qualquer resposta visual']},
-    {id:'b5',num:'B05',title:'Legibilidade',subtitle:'Características visuais que afetam a leitura do texto na tela.',good:['Contraste adequado, fonte legível, espaçamento bom'],bad:['Texto cinza claro em fundo branco','Fonte muito pequena ou condensada']},
-    {id:'b6',num:'B06',title:'Concisão',subtitle:'Quantidade de informação apresentada de uma só vez, sem sobrecarregar.',good:['Formulários com etapas progressivas','Informações essenciais em primeiro lugar'],bad:['Tela com dezenas de campos de uma vez']},
-    {id:'b7',num:'B07',title:'Ações Mínimas',subtitle:'Limitar ao máximo o número de passos necessários para completar uma tarefa.',good:['Checkout em 1 página','Autopreenchimento de dados já conhecidos'],bad:['Registro obrigatório para comprar','Muitas telas para uma tarefa simples']},
-    {id:'b8',num:'B08',title:'Densidade Informacional',subtitle:'Carga cognitiva imposta pela densidade de informação na tela.',good:['Dashboards com informações prioritárias em destaque','Uso generoso de espaço em branco'],bad:['Tabelas com dezenas de colunas sem filtro','Interface sobrecarregada de dados']},
-    {id:'b9',num:'B09',title:'Ações Explícitas',subtitle:'O sistema só executa ações quando o usuário as solicita explicitamente.',good:['Formulário enviado apenas ao clicar em "Enviar"','Mudanças salvas só ao confirmar'],bad:['Dados salvos automaticamente sem aviso','Ação disparada ao mover o mouse']},
-    {id:'b10',num:'B10',title:'Controle do Usuário',subtitle:'O usuário controla o sistema — pode parar, pausar ou cancelar operações.',good:['Botão para cancelar downloads','Fechar modais com Esc'],bad:['Modal que não pode ser fechado','Redirecionamento automático sem opção de cancelar']},
-    {id:'b11',num:'B11',title:'Flexibilidade',subtitle:'Adaptação às diversas necessidades e preferências dos usuários.',good:['Modo claro e escuro disponíveis','Tamanho de fonte ajustável'],bad:['Sem nenhuma opção de personalização']},
-    {id:'b12',num:'B12',title:'Consideração da Experiência do Usuário',subtitle:'Levar em conta a diversidade de usuários — novatos e experientes.',good:['Onboarding para novos usuários','Modo básico e avançado separados'],bad:['Interface que assume expertise do usuário']},
-    {id:'b13',num:'B13',title:'Proteção contra Erros',subtitle:'Meios para evitar e recuperar de erros de entrada de dados.',good:['Validação antes do envio final','Undo disponível para ações importantes'],bad:['Deletar item sem confirmação']},
-    {id:'b14',num:'B14',title:'Qualidade das Mensagens de Erro',subtitle:'Mensagens precisas que indicam a natureza exata do erro.',good:['"Senha deve ter ao menos 8 caracteres com uma maiúscula"'],bad:['"Erro ao processar"','"Campo inválido" sem explicar como corrigir']},
-    {id:'b15',num:'B15',title:'Correção dos Erros',subtitle:'Meios para que o usuário corrija erros sem perder o trabalho já feito.',good:['Campo de erro já preenchido para editar e reenviar'],bad:['Formulário reseta completamente após erro']},
-    {id:'b16',num:'B16',title:'Consistência',subtitle:'Elementos idênticos têm comportamentos e aparência idênticos em todo o sistema.',good:['Todos os botões primários com mesmo estilo'],bad:['Datas em formatos diferentes em páginas distintas']},
-    {id:'b17',num:'B17',title:'Significados dos Códigos e Denominações',subtitle:'Codificações usadas são consistentes, significativas e claras.',good:['Verde = sucesso, vermelho = erro em todo o sistema'],bad:['Ícone sem texto de apoio']},
-    {id:'b18',num:'B18',title:'Compatibilidade',subtitle:'Adequação entre a organização do sistema e as características dos usuários.',good:['Formulário de endereço no padrão brasileiro'],bad:['Interface em inglês para público exclusivamente português']}
+    {id:'b1',num:'B01',
+     pt:{title:'Presteza',subtitle:'Fornecer informações suficientes para guiar o usuário em suas ações.',good:['Labels descritivos em todos os campos','Instruções antes de formulários complexos'],bad:['Campos sem label ou com label ambíguo']},
+     en:{title:'Prompting',subtitle:'Provide sufficient information to guide the user in their actions.',good:['Descriptive labels on all fields','Instructions before complex forms'],bad:['Fields without label or with ambiguous label']}},
+    {id:'b2',num:'B02',
+     pt:{title:'Agrupamento e Distinção por Localização',subtitle:'Itens relacionados próximos; itens distintos separados visualmente.',good:['Configurações agrupadas por categoria','Seções bem delimitadas'],bad:['Campos relacionados espalhados pela tela']},
+     en:{title:'Grouping/Distinction by Location',subtitle:'Related items close together; distinct items visually separated.',good:['Settings grouped by category','Well-delimited sections'],bad:['Related fields scattered across the screen']}},
+    {id:'b3',num:'B03',
+     pt:{title:'Agrupamento e Distinção por Formato',subtitle:'Usar cores, formas e tipografia para distinguir categorias.',good:['Alertas em cores distintas','Ícones diferenciados por tipo'],bad:['Erros e avisos com visual idêntico']},
+     en:{title:'Grouping/Distinction by Format',subtitle:'Use colors, shapes, and typography to distinguish categories.',good:['Alerts in distinct colors','Icons differentiated by type'],bad:['Errors and warnings with identical appearance']}},
+    {id:'b4',num:'B04',
+     pt:{title:'Feedback Imediato',subtitle:'O sistema responde rapidamente a toda ação do usuário.',good:['Confirmação visual ao salvar','Spinner visível durante operações'],bad:['Ação sem qualquer resposta visual']},
+     en:{title:'Immediate Feedback',subtitle:'The system responds promptly to every user action.',good:['Visual confirmation when saving','Visible spinner during operations'],bad:['Action with no visual response']}},
+    {id:'b5',num:'B05',
+     pt:{title:'Legibilidade',subtitle:'Características visuais que afetam a leitura do texto na tela.',good:['Contraste adequado, fonte legível, espaçamento bom'],bad:['Texto cinza claro em fundo branco','Fonte muito pequena ou condensada']},
+     en:{title:'Legibility',subtitle:'Visual characteristics affecting the readability of text on screen.',good:['Adequate contrast, legible font, good spacing'],bad:['Light grey text on white background','Font too small or condensed']}},
+    {id:'b6',num:'B06',
+     pt:{title:'Concisão',subtitle:'Quantidade de informação apresentada de uma só vez, sem sobrecarregar.',good:['Formulários com etapas progressivas','Informações essenciais em primeiro lugar'],bad:['Tela com dezenas de campos de uma vez']},
+     en:{title:'Conciseness',subtitle:'Amount of information presented at once, without overwhelming.',good:['Forms with progressive steps','Essential information first'],bad:['Screen with dozens of fields at once']}},
+    {id:'b7',num:'B07',
+     pt:{title:'Ações Mínimas',subtitle:'Limitar ao máximo o número de passos necessários para completar uma tarefa.',good:['Checkout em 1 página','Autopreenchimento de dados já conhecidos'],bad:['Registro obrigatório para comprar','Muitas telas para uma tarefa simples']},
+     en:{title:'Minimal Actions',subtitle:'Limit to the maximum the number of steps needed to complete a task.',good:['Single-page checkout','Autofill for known data'],bad:['Mandatory registration to purchase','Many screens for a simple task']}},
+    {id:'b8',num:'B08',
+     pt:{title:'Densidade Informacional',subtitle:'Carga cognitiva imposta pela densidade de informação na tela.',good:['Dashboards com informações prioritárias em destaque','Uso generoso de espaço em branco'],bad:['Tabelas com dezenas de colunas sem filtro','Interface sobrecarregada de dados']},
+     en:{title:'Information Density',subtitle:'Cognitive load imposed by the density of information on screen.',good:['Dashboards with priority info highlighted','Generous use of white space'],bad:['Tables with dozens of columns without filter','Overloaded interface']}},
+    {id:'b9',num:'B09',
+     pt:{title:'Ações Explícitas',subtitle:'O sistema só executa ações quando o usuário as solicita explicitamente.',good:['Formulário enviado apenas ao clicar em "Enviar"','Mudanças salvas só ao confirmar'],bad:['Dados salvos automaticamente sem aviso','Ação disparada ao mover o mouse']},
+     en:{title:'Explicit Actions',subtitle:'The system only performs actions when the user explicitly requests them.',good:['Form submitted only when clicking "Submit"','Changes saved only on confirmation'],bad:['Data saved automatically without warning','Action triggered by mouse movement']}},
+    {id:'b10',num:'B10',
+     pt:{title:'Controle do Usuário',subtitle:'O usuário controla o sistema — pode parar, pausar ou cancelar operações.',good:['Botão para cancelar downloads','Fechar modais com Esc'],bad:['Modal que não pode ser fechado','Redirecionamento automático sem opção de cancelar']},
+     en:{title:'User Control',subtitle:'The user controls the system — can stop, pause, or cancel operations.',good:['Button to cancel downloads','Close modals with Esc'],bad:['Modal that cannot be closed','Automatic redirect without cancel option']}},
+    {id:'b11',num:'B11',
+     pt:{title:'Flexibilidade',subtitle:'Adaptação às diversas necessidades e preferências dos usuários.',good:['Modo claro e escuro disponíveis','Tamanho de fonte ajustável'],bad:['Sem nenhuma opção de personalização']},
+     en:{title:'Flexibility',subtitle:'Adaptation to the diverse needs and preferences of users.',good:['Light and dark mode available','Adjustable font size'],bad:['No customization options whatsoever']}},
+    {id:'b12',num:'B12',
+     pt:{title:'Consideração da Experiência do Usuário',subtitle:'Levar em conta a diversidade de usuários — novatos e experientes.',good:['Onboarding para novos usuários','Modo básico e avançado separados'],bad:['Interface que assume expertise do usuário']},
+     en:{title:'User Experience Consideration',subtitle:'Take into account the diversity of users — novices and experienced.',good:['Onboarding for new users','Separate basic and advanced modes'],bad:['Interface that assumes user expertise']}},
+    {id:'b13',num:'B13',
+     pt:{title:'Proteção contra Erros',subtitle:'Meios para evitar e recuperar de erros de entrada de dados.',good:['Validação antes do envio final','Undo disponível para ações importantes'],bad:['Deletar item sem confirmação']},
+     en:{title:'Error Protection',subtitle:'Means to prevent and recover from data entry errors.',good:['Validation before final submission','Undo available for important actions'],bad:['Delete item without confirmation']}},
+    {id:'b14',num:'B14',
+     pt:{title:'Qualidade das Mensagens de Erro',subtitle:'Mensagens precisas que indicam a natureza exata do erro.',good:['"Senha deve ter ao menos 8 caracteres com uma maiúscula"'],bad:['"Erro ao processar"','"Campo inválido" sem explicar como corrigir']},
+     en:{title:'Error Message Quality',subtitle:'Precise messages indicating the exact nature of the error.',good:['"Password must have at least 8 characters with one uppercase"'],bad:['"Processing error"','"Invalid field" without explaining how to fix']}},
+    {id:'b15',num:'B15',
+     pt:{title:'Correção dos Erros',subtitle:'Meios para que o usuário corrija erros sem perder o trabalho já feito.',good:['Campo de erro já preenchido para editar e reenviar'],bad:['Formulário reseta completamente após erro']},
+     en:{title:'Error Correction',subtitle:'Means for the user to correct errors without losing work already done.',good:['Error field pre-filled for editing and resubmission'],bad:['Form resets completely after error']}},
+    {id:'b16',num:'B16',
+     pt:{title:'Consistência',subtitle:'Elementos idênticos têm comportamentos e aparência idênticos em todo o sistema.',good:['Todos os botões primários com mesmo estilo'],bad:['Datas em formatos diferentes em páginas distintas']},
+     en:{title:'Consistency',subtitle:'Identical elements have identical behaviors and appearance throughout the system.',good:['All primary buttons with the same style'],bad:['Dates in different formats on different pages']}},
+    {id:'b17',num:'B17',
+     pt:{title:'Significados dos Códigos e Denominações',subtitle:'Codificações usadas são consistentes, significativas e claras.',good:['Verde = sucesso, vermelho = erro em todo o sistema'],bad:['Ícone sem texto de apoio']},
+     en:{title:'Meaning of Codes and Denominations',subtitle:'Encodings used are consistent, meaningful, and clear.',good:['Green = success, red = error throughout the system'],bad:['Icon without supporting text']}},
+    {id:'b18',num:'B18',
+     pt:{title:'Compatibilidade',subtitle:'Adequação entre a organização do sistema e as características dos usuários.',good:['Formulário de endereço no padrão brasileiro'],bad:['Interface em inglês para público exclusivamente português']},
+     en:{title:'Compatibility',subtitle:'Adequacy between the organization of the system and user characteristics.',good:['Address form following local standard'],bad:['Interface in English for exclusively non-English-speaking audience']}}
   ]},
   wcag: { color:'#6af7c0', items:[
-    {id:'w1',num:'P·1A',title:'Perceptível — Alternativas em Texto',subtitle:'Todo conteúdo não-texto tem alternativa em texto para leitores de tela.',good:['alt="Foto de produto: tênis azul"','Aria-label em botões que só têm ícone'],bad:['Tag img sem atributo alt']},
-    {id:'w2',num:'P·1B',title:'Perceptível — Contraste de Cores',subtitle:'Contraste mínimo de 4,5:1 para texto normal e 3:1 para texto grande.',good:['Texto #333 em fundo #FFF = 12.6:1'],bad:['Texto #999 em fundo #FFF = 2.8:1 (reprovado)']},
-    {id:'w3',num:'P·1C',title:'Perceptível — Redimensionamento de Texto',subtitle:'Texto ampliado até 200% sem perda de conteúdo.',good:['Site responsivo que adapta ao zoom do navegador'],bad:['Layout quebra ao aumentar fonte para 200%']},
-    {id:'w4',num:'O·2A',title:'Operável — Acessibilidade pelo Teclado',subtitle:'Toda funcionalidade disponível via teclado.',good:['Tab navega por todos os controles em ordem lógica'],bad:['Menu dropdown não acessível por teclado']},
-    {id:'w5',num:'O·2B',title:'Operável — Tempo Suficiente',subtitle:'Usuários têm tempo suficiente para ler e usar o conteúdo.',good:['Aviso antes do timeout com opção de estender'],bad:['Session timeout abrupto sem aviso']},
-    {id:'w6',num:'O·2C',title:'Operável — Convulsões e Reações Físicas',subtitle:'Não criar conteúdo que pisca mais de 3 vezes por segundo.',good:['Animações suaves sem flashes'],bad:['GIFs com efeito estroboscópico']},
-    {id:'w7',num:'O·2D',title:'Operável — Navegável',subtitle:'Mecanismos para ajudar usuários a navegar e localizar conteúdo.',good:['Link "Pular para o conteúdo principal"','Breadcrumbs em páginas internas'],bad:['Página sem tag title','Headings fora de ordem']},
-    {id:'w8',num:'C·3A',title:'Compreensível — Idioma da Página',subtitle:'O idioma principal da página está identificado no HTML.',good:['Atributo lang="pt-BR" na tag html'],bad:['Tag html sem atributo lang']},
-    {id:'w9',num:'C·3B',title:'Compreensível — Previsível',subtitle:'Páginas operam de forma previsível.',good:['Links com texto descritivo do destino'],bad:['"Clique aqui" sem contexto']},
-    {id:'w10',num:'C·3C',title:'Compreensível — Assistência na Entrada de Dados',subtitle:'Ajuda para evitar e corrigir erros em formulários.',good:['Labels permanentes visíveis acima do campo'],bad:['Placeholder usado como único label']},
-    {id:'w11',num:'R·4A',title:'Robusto — Compatível com Tecnologias Assistivas',subtitle:'Conteúdo interpretado corretamente por leitores de tela.',good:['HTML semântico válido','Testado em NVDA, VoiceOver'],bad:['Usar div com onclick no lugar de button']}
+    {id:'w1',num:'P·1A',
+     pt:{title:'Perceptível — Alternativas em Texto',subtitle:'Todo conteúdo não-texto tem alternativa em texto para leitores de tela.',good:['alt="Foto de produto: tênis azul"','Aria-label em botões que só têm ícone'],bad:['Tag img sem atributo alt']},
+     en:{title:'Perceivable — Text Alternatives',subtitle:'All non-text content has a text alternative for screen readers.',good:['alt="Product photo: blue sneaker"','Aria-label on icon-only buttons'],bad:['img tag without alt attribute']}},
+    {id:'w2',num:'P·1B',
+     pt:{title:'Perceptível — Contraste de Cores',subtitle:'Contraste mínimo de 4,5:1 para texto normal e 3:1 para texto grande.',good:['Texto #333 em fundo #FFF = 12.6:1'],bad:['Texto #999 em fundo #FFF = 2.8:1 (reprovado)']},
+     en:{title:'Perceivable — Color Contrast',subtitle:'Minimum contrast of 4.5:1 for normal text and 3:1 for large text.',good:['Text #333 on #FFF background = 12.6:1'],bad:['Text #999 on #FFF background = 2.8:1 (fail)']}},
+    {id:'w3',num:'P·1C',
+     pt:{title:'Perceptível — Redimensionamento de Texto',subtitle:'Texto ampliado até 200% sem perda de conteúdo.',good:['Site responsivo que adapta ao zoom do navegador'],bad:['Layout quebra ao aumentar fonte para 200%']},
+     en:{title:'Perceivable — Text Resize',subtitle:'Text enlarged up to 200% without loss of content.',good:['Responsive site that adapts to browser zoom'],bad:['Layout breaks when font is increased to 200%']}},
+    {id:'w4',num:'O·2A',
+     pt:{title:'Operável — Acessibilidade pelo Teclado',subtitle:'Toda funcionalidade disponível via teclado.',good:['Tab navega por todos os controles em ordem lógica'],bad:['Menu dropdown não acessível por teclado']},
+     en:{title:'Operable — Keyboard Accessible',subtitle:'All functionality available via keyboard.',good:['Tab navigates through all controls in logical order'],bad:['Dropdown menu not keyboard accessible']}},
+    {id:'w5',num:'O·2B',
+     pt:{title:'Operável — Tempo Suficiente',subtitle:'Usuários têm tempo suficiente para ler e usar o conteúdo.',good:['Aviso antes do timeout com opção de estender'],bad:['Session timeout abrupto sem aviso']},
+     en:{title:'Operable — Enough Time',subtitle:'Users have enough time to read and use the content.',good:['Warning before timeout with option to extend'],bad:['Abrupt session timeout without warning']}},
+    {id:'w6',num:'O·2C',
+     pt:{title:'Operável — Convulsões e Reações Físicas',subtitle:'Não criar conteúdo que pisca mais de 3 vezes por segundo.',good:['Animações suaves sem flashes'],bad:['GIFs com efeito estroboscópico']},
+     en:{title:'Operable — Seizures and Physical Reactions',subtitle:'Do not create content that flashes more than 3 times per second.',good:['Smooth animations without flashes'],bad:['GIFs with stroboscopic effect']}},
+    {id:'w7',num:'O·2D',
+     pt:{title:'Operável — Navegável',subtitle:'Mecanismos para ajudar usuários a navegar e localizar conteúdo.',good:['Link "Pular para o conteúdo principal"','Breadcrumbs em páginas internas'],bad:['Página sem tag title','Headings fora de ordem']},
+     en:{title:'Operable — Navigable',subtitle:'Mechanisms to help users navigate and locate content.',good:['"Skip to main content" link','Breadcrumbs on internal pages'],bad:['Page without title tag','Headings out of order']}},
+    {id:'w8',num:'C·3A',
+     pt:{title:'Compreensível — Idioma da Página',subtitle:'O idioma principal da página está identificado no HTML.',good:['Atributo lang="pt-BR" na tag html'],bad:['Tag html sem atributo lang']},
+     en:{title:'Understandable — Language of Page',subtitle:'The main language of the page is identified in the HTML.',good:['lang="en" attribute on html tag'],bad:['html tag without lang attribute']}},
+    {id:'w9',num:'C·3B',
+     pt:{title:'Compreensível — Previsível',subtitle:'Páginas operam de forma previsível.',good:['Links com texto descritivo do destino'],bad:['"Clique aqui" sem contexto']},
+     en:{title:'Understandable — Predictable',subtitle:'Pages operate in predictable ways.',good:['Links with descriptive text of destination'],bad:['"Click here" without context']}},
+    {id:'w10',num:'C·3C',
+     pt:{title:'Compreensível — Assistência na Entrada de Dados',subtitle:'Ajuda para evitar e corrigir erros em formulários.',good:['Labels permanentes visíveis acima do campo'],bad:['Placeholder usado como único label']},
+     en:{title:'Understandable — Input Assistance',subtitle:'Help to avoid and correct errors in forms.',good:['Permanent labels visible above the field'],bad:['Placeholder used as the only label']}},
+    {id:'w11',num:'R·4A',
+     pt:{title:'Robusto — Compatível com Tecnologias Assistivas',subtitle:'Conteúdo interpretado corretamente por leitores de tela.',good:['HTML semântico válido','Testado em NVDA, VoiceOver'],bad:['Usar div com onclick no lugar de button']},
+     en:{title:'Robust — Compatible with Assistive Technologies',subtitle:'Content correctly interpreted by screen readers.',good:['Valid semantic HTML','Tested with NVDA, VoiceOver'],bad:['Using div with onclick instead of button']}}
   ]},
   gestalt: { color:'#f76a8a', items:[
-    {id:'g1',num:'G01',title:'Proximidade',subtitle:'Elementos próximos são percebidos como relacionados.',good:['Label imediatamente acima do campo'],bad:['Label longe do campo ao qual pertence']},
-    {id:'g2',num:'G02',title:'Semelhança',subtitle:'Elementos com aparência similar são percebidos como do mesmo grupo.',good:['Todos os botões primários com mesmo estilo'],bad:['Botões com estilos iguais executando ações diferentes']},
-    {id:'g3',num:'G03',title:'Continuidade',subtitle:'O olho tende a seguir linhas e curvas suaves.',good:['Breadcrumb com seta → direcional','Progress bar horizontal'],bad:['Navegação que quebra o fluxo visual esperado']},
-    {id:'g4',num:'G04',title:'Fechamento (Closure)',subtitle:'A mente completa formas incompletas.',good:['Ícone de hambúrguer (≡) reconhecido como menu'],bad:['Ícones muito abstratos que não comunicam a função']},
-    {id:'g5',num:'G05',title:'Figura e Fundo',subtitle:'A mente separa elementos em "figura" (foco) e "fundo".',good:['Modal com overlay escuro semitransparente'],bad:['Imagem de fundo complexa que compete com o texto']},
-    {id:'g6',num:'G06',title:'Hierarquia Visual',subtitle:'Elementos importantes devem ser visivelmente distintos.',good:['H1 > H2 > H3 visivelmente distintos','CTA primário maior e mais colorido'],bad:['Todos os textos no mesmo tamanho']},
-    {id:'g7',num:'G07',title:'Região Comum',subtitle:'Elementos dentro de uma área delimitada são percebidos como pertencentes ao mesmo grupo.',good:['Card com sombra agrupando título, imagem e botão'],bad:['Conteúdo de grupos diferentes sem delimitação']},
-    {id:'g8',num:'G08',title:'Simetria e Ordem',subtitle:'A mente tende a perceber e preferir formas simétricas.',good:['Grid simétrico cria harmonia'],bad:['Desalinhamento acidental que parece erro']}
+    {id:'g1',num:'G01',
+     pt:{title:'Proximidade',subtitle:'Elementos próximos são percebidos como relacionados.',good:['Label imediatamente acima do campo'],bad:['Label longe do campo ao qual pertence']},
+     en:{title:'Proximity',subtitle:'Elements that are close together are perceived as related.',good:['Label immediately above the field'],bad:['Label far from the field it belongs to']}},
+    {id:'g2',num:'G02',
+     pt:{title:'Semelhança',subtitle:'Elementos com aparência similar são percebidos como do mesmo grupo.',good:['Todos os botões primários com mesmo estilo'],bad:['Botões com estilos iguais executando ações diferentes']},
+     en:{title:'Similarity',subtitle:'Elements with similar appearance are perceived as belonging to the same group.',good:['All primary buttons with the same style'],bad:['Buttons with the same style performing different actions']}},
+    {id:'g3',num:'G03',
+     pt:{title:'Continuidade',subtitle:'O olho tende a seguir linhas e curvas suaves.',good:['Breadcrumb com seta → direcional','Progress bar horizontal'],bad:['Navegação que quebra o fluxo visual esperado']},
+     en:{title:'Continuity',subtitle:'The eye tends to follow smooth lines and curves.',good:['Breadcrumb with directional →','Horizontal progress bar'],bad:['Navigation that breaks expected visual flow']}},
+    {id:'g4',num:'G04',
+     pt:{title:'Fechamento (Closure)',subtitle:'A mente completa formas incompletas.',good:['Ícone de hambúrguer (≡) reconhecido como menu'],bad:['Ícones muito abstratos que não comunicam a função']},
+     en:{title:'Closure',subtitle:'The mind completes incomplete shapes.',good:['Hamburger icon (≡) recognized as menu'],bad:['Very abstract icons that do not communicate function']}},
+    {id:'g5',num:'G05',
+     pt:{title:'Figura e Fundo',subtitle:'A mente separa elementos em "figura" (foco) e "fundo".',good:['Modal com overlay escuro semitransparente'],bad:['Imagem de fundo complexa que compete com o texto']},
+     en:{title:'Figure and Ground',subtitle:'The mind separates elements into "figure" (focus) and "ground".',good:['Modal with semi-transparent dark overlay'],bad:['Complex background image competing with text']}},
+    {id:'g6',num:'G06',
+     pt:{title:'Hierarquia Visual',subtitle:'Elementos importantes devem ser visivelmente distintos.',good:['H1 > H2 > H3 visivelmente distintos','CTA primário maior e mais colorido'],bad:['Todos os textos no mesmo tamanho']},
+     en:{title:'Visual Hierarchy',subtitle:'Important elements should be visibly distinct.',good:['H1 > H2 > H3 visibly distinct','Primary CTA larger and more colorful'],bad:['All text at the same size']}},
+    {id:'g7',num:'G07',
+     pt:{title:'Região Comum',subtitle:'Elementos dentro de uma área delimitada são percebidos como pertencentes ao mesmo grupo.',good:['Card com sombra agrupando título, imagem e botão'],bad:['Conteúdo de grupos diferentes sem delimitação']},
+     en:{title:'Common Region',subtitle:'Elements within a delimited area are perceived as belonging to the same group.',good:['Card with shadow grouping title, image, and button'],bad:['Content from different groups without delimitation']}},
+    {id:'g8',num:'G08',
+     pt:{title:'Simetria e Ordem',subtitle:'A mente tende a perceber e preferir formas simétricas.',good:['Grid simétrico cria harmonia'],bad:['Desalinhamento acidental que parece erro']},
+     en:{title:'Symmetry and Order',subtitle:'The mind tends to perceive and prefer symmetrical shapes.',good:['Symmetrical grid creates harmony'],bad:['Accidental misalignment that looks like an error']}}
   ]}
 };
 
-const TOTAL_ITEMS = Object.values(DATA).reduce((a,fw)=>a+fw.items.length,0);
-const ratings = {};
+// Helper: get item text in current language
+function itemL(item) { return item[currentLang] || item.pt; }
 
-// ─── DADOS EM INGLÊS ──────────────────────────────────────────────────────────
-const DATA_EN = {
-  nielsen: { items:[
-    {id:'n1',title:'Visibility of System Status',subtitle:'The system always keeps users informed about what is going on, with appropriate feedback within reasonable time.',good:['Progress bar during upload','Visible loading animation','"Submitted successfully!" after form'],bad:['Button with no feedback when clicked','Form disappears without confirmation message']},
-    {id:'n2',title:'Match Between System and the Real World',subtitle:'The system speaks the user\'s language — words and concepts familiar to users, not system-oriented jargon.',good:['Trash icon for delete','Clear plain language'],bad:['"HTTP 403 Forbidden" as error message','Unexplained technical acronyms']},
-    {id:'n3',title:'User Control and Freedom',subtitle:'Users need clearly marked emergency exits. Support undo and redo.',good:['Visible "Cancel" button','Ctrl+Z works','Close modal with Esc'],bad:['No back button','Irreversible action without confirmation']},
-    {id:'n4',title:'Consistency and Standards',subtitle:'Follow platform conventions. The same word should always mean the same thing.',good:['Consistent button style throughout the site','Same vocabulary across all flows'],bad:['"Save" button sometimes green, sometimes blue']},
-    {id:'n5',title:'Error Prevention',subtitle:'Careful design that prevents problems from occurring in the first place.',good:['Real-time validation in form','Confirm before critical action'],bad:['Date field without format indication']},
-    {id:'n6',title:'Recognition Rather Than Recall',subtitle:'Minimize the user\'s memory load. Objects and actions should be visible.',good:['Always-visible menu','Breadcrumb navigation'],bad:['Keyboard shortcuts with no visual hint']},
-    {id:'n7',title:'Flexibility and Efficiency of Use',subtitle:'Accelerators for experienced users. Interface works for both novices and experts.',good:['Documented keyboard shortcuts','Advanced filters'],bad:['No keyboard shortcuts available']},
-    {id:'n8',title:'Aesthetic and Minimalist Design',subtitle:'Do not include irrelevant information. Every extra element competes with relevant ones.',good:['Clean layout with clear hierarchy','No unnecessary pop-ups'],bad:['Page full of banners','Unrelated information mixed together']},
-    {id:'n9',title:'Help Users Recognize, Diagnose, and Recover from Errors',subtitle:'Error messages in plain language, indicating the problem and suggesting a solution.',good:['"Invalid email — use name@domain.com"','Error field highlighted in red'],bad:['"Error 500"','"Operation not allowed" without context']},
-    {id:'n10',title:'Help and Documentation',subtitle:'Even though it is better if the system can be used without documentation, help should be available and easy to search.',good:['FAQ accessible in 1 click','Tooltips on complex features'],bad:['Nonexistent or hard-to-find documentation']}
-  ]},
-  bastien: { items:[
-    {id:'b1',title:'Prompting',subtitle:'Provide sufficient information to guide the user in their actions.',good:['Descriptive labels on all fields','Instructions before complex forms'],bad:['Fields without label or with ambiguous label']},
-    {id:'b2',title:'Grouping/Distinction by Location',subtitle:'Related items close together; distinct items visually separated.',good:['Settings grouped by category','Well-delimited sections'],bad:['Related fields scattered across the screen']},
-    {id:'b3',title:'Grouping/Distinction by Format',subtitle:'Use colors, shapes, and typography to distinguish categories.',good:['Alerts in distinct colors','Icons differentiated by type'],bad:['Errors and warnings with identical appearance']},
-    {id:'b4',title:'Immediate Feedback',subtitle:'The system responds promptly to every user action.',good:['Visual confirmation when saving','Visible spinner during operations'],bad:['Action with no visual response']},
-    {id:'b5',title:'Legibility',subtitle:'Visual characteristics affecting the readability of text on screen.',good:['Adequate contrast, legible font, good spacing'],bad:['Light grey text on white background','Font too small or condensed']},
-    {id:'b6',title:'Conciseness',subtitle:'Amount of information presented at once, without overwhelming.',good:['Forms with progressive steps','Essential information first'],bad:['Screen with dozens of fields at once']},
-    {id:'b7',title:'Minimal Actions',subtitle:'Limit to the maximum the number of steps needed to complete a task.',good:['Single-page checkout','Autofill for known data'],bad:['Mandatory registration to purchase','Many screens for a simple task']},
-    {id:'b8',title:'Information Density',subtitle:'Cognitive load imposed by the density of information on screen.',good:['Dashboards with priority info highlighted','Generous use of white space'],bad:['Tables with dozens of columns without filter','Overloaded interface']},
-    {id:'b9',title:'Explicit Actions',subtitle:'The system only performs actions when the user explicitly requests them.',good:['Form submitted only when clicking "Submit"','Changes saved only on confirmation'],bad:['Data saved automatically without warning','Action triggered by mouse movement']},
-    {id:'b10',title:'User Control',subtitle:'The user controls the system — can stop, pause, or cancel operations.',good:['Button to cancel downloads','Close modals with Esc'],bad:['Modal that cannot be closed','Automatic redirect without cancel option']},
-    {id:'b11',title:'Flexibility',subtitle:'Adaptation to the diverse needs and preferences of users.',good:['Light and dark mode available','Adjustable font size'],bad:['No customization options whatsoever']},
-    {id:'b12',title:'User Experience Consideration',subtitle:'Take into account the diversity of users — novices and experienced.',good:['Onboarding for new users','Separate basic and advanced modes'],bad:['Interface that assumes user expertise']},
-    {id:'b13',title:'Error Protection',subtitle:'Means to prevent and recover from data entry errors.',good:['Validation before final submission','Undo available for important actions'],bad:['Delete item without confirmation']},
-    {id:'b14',title:'Error Message Quality',subtitle:'Precise messages indicating the exact nature of the error.',good:['"Password must have at least 8 characters with one uppercase"'],bad:['"Processing error"','"Invalid field" without explaining how to fix']},
-    {id:'b15',title:'Error Correction',subtitle:'Means for the user to correct errors without losing work already done.',good:['Error field pre-filled for editing and resubmission'],bad:['Form resets completely after error']},
-    {id:'b16',title:'Consistency',subtitle:'Identical elements have identical behaviors and appearance throughout the system.',good:['All primary buttons with the same style'],bad:['Dates in different formats on different pages']},
-    {id:'b17',title:'Meaning of Codes and Denominations',subtitle:'Encodings used are consistent, meaningful, and clear.',good:['Green = success, red = error throughout the system'],bad:['Icon without supporting text']},
-    {id:'b18',title:'Compatibility',subtitle:'Adequacy between the organization of the system and user characteristics.',good:['Address form following local standard'],bad:['Interface in English for exclusively non-English-speaking audience']}
-  ]},
-  wcag: { items:[
-    {id:'w1',title:'Perceivable — Text Alternatives',subtitle:'All non-text content has a text alternative for screen readers.',good:['alt="Product photo: blue sneaker"','Aria-label on icon-only buttons'],bad:['img tag without alt attribute']},
-    {id:'w2',title:'Perceivable — Color Contrast',subtitle:'Minimum contrast of 4.5:1 for normal text and 3:1 for large text.',good:['Text #333 on #FFF background = 12.6:1'],bad:['Text #999 on #FFF background = 2.8:1 (fail)']},
-    {id:'w3',title:'Perceivable — Text Resize',subtitle:'Text enlarged up to 200% without loss of content.',good:['Responsive site that adapts to browser zoom'],bad:['Layout breaks when font is increased to 200%']},
-    {id:'w4',title:'Operable — Keyboard Accessible',subtitle:'All functionality available via keyboard.',good:['Tab navigates through all controls in logical order'],bad:['Dropdown menu not keyboard accessible']},
-    {id:'w5',title:'Operable — Enough Time',subtitle:'Users have enough time to read and use the content.',good:['Warning before timeout with option to extend'],bad:['Abrupt session timeout without warning']},
-    {id:'w6',title:'Operable — Seizures and Physical Reactions',subtitle:'Do not create content that flashes more than 3 times per second.',good:['Smooth animations without flashes'],bad:['GIFs with stroboscopic effect']},
-    {id:'w7',title:'Operable — Navigable',subtitle:'Mechanisms to help users navigate and locate content.',good:['"Skip to main content" link','Breadcrumbs on internal pages'],bad:['Page without title tag','Headings out of order']},
-    {id:'w8',title:'Understandable — Language of Page',subtitle:'The main language of the page is identified in the HTML.',good:['lang="en" attribute on html tag'],bad:['html tag without lang attribute']},
-    {id:'w9',title:'Understandable — Predictable',subtitle:'Pages operate in predictable ways.',good:['Links with descriptive text of destination'],bad:['"Click here" without context']},
-    {id:'w10',title:'Understandable — Input Assistance',subtitle:'Help to avoid and correct errors in forms.',good:['Permanent labels visible above the field'],bad:['Placeholder used as the only label']},
-    {id:'w11',title:'Robust — Compatible with Assistive Technologies',subtitle:'Content correctly interpreted by screen readers.',good:['Valid semantic HTML','Tested with NVDA, VoiceOver'],bad:['Using div with onclick instead of button']}
-  ]},
-  gestalt: { items:[
-    {id:'g1',title:'Proximity',subtitle:'Elements that are close together are perceived as related.',good:['Label immediately above the field'],bad:['Label far from the field it belongs to']},
-    {id:'g2',title:'Similarity',subtitle:'Elements with similar appearance are perceived as belonging to the same group.',good:['All primary buttons with the same style'],bad:['Buttons with the same style performing different actions']},
-    {id:'g3',title:'Continuity',subtitle:'The eye tends to follow smooth lines and curves.',good:['Breadcrumb with directional →','Horizontal progress bar'],bad:['Navigation that breaks expected visual flow']},
-    {id:'g4',title:'Closure',subtitle:'The mind completes incomplete shapes.',good:['Hamburger icon (≡) recognized as menu'],bad:['Very abstract icons that do not communicate function']},
-    {id:'g5',title:'Figure and Ground',subtitle:'The mind separates elements into "figure" (focus) and "ground".',good:['Modal with semi-transparent dark overlay'],bad:['Complex background image competing with text']},
-    {id:'g6',title:'Visual Hierarchy',subtitle:'Important elements should be visibly distinct.',good:['H1 > H2 > H3 visibly distinct','Primary CTA larger and more colorful'],bad:['All text at the same size']},
-    {id:'g7',title:'Common Region',subtitle:'Elements within a delimited area are perceived as belonging to the same group.',good:['Card with shadow grouping title, image, and button'],bad:['Content from different groups without delimitation']},
-    {id:'g8',title:'Symmetry and Order',subtitle:'The mind tends to perceive and prefer symmetrical shapes.',good:['Symmetrical grid creates harmony'],bad:['Accidental misalignment that looks like an error']}
-  ]}
-};
-
-function getCriteriaData(fw) {
-  if (currentLang === 'en') {
-    return DATA[fw].items.map(item => {
-      const en = DATA_EN[fw].items.find(e => e.id === item.id);
-      return en ? { ...item, title: en.title, subtitle: en.subtitle, good: en.good, bad: en.bad } : item;
-    });
-  }
-  return DATA[fw].items;
-}
-
-function rebuildCriteria(framework) {
-  const container = document.getElementById(`criteria-${framework}`);
-  if (!container) return;
-  container.innerHTML = '';
-  const color = DATA[framework].color;
-  getCriteriaData(framework).forEach(item => {
-    const r = ratings[item.id] || { score: null, na: false, notes: '' };
-    const goodPills = item.good.map(g => `<span class="example-pill">✓ ${g}</span>`).join('');
-    const badPills  = item.bad.map(b  => `<span class="example-pill bad-pill">✗ ${b}</span>`).join('');
-    const div = document.createElement('div');
-    div.className = 'criterion' + (document.getElementById(`crit-${item.id}`)?.classList.contains('open') ? ' open' : '');
-    div.id = `crit-${item.id}`;
-    div.innerHTML = `
-      <div class="criterion-header" onclick="toggleCrit('${item.id}')">
-        <div class="criterion-num" style="color:${color};background:${color}22">${item.num}</div>
-        <div style="flex:1;min-width:0">
-          <div class="criterion-title">${item.title}</div>
-          <div class="criterion-subtitle">${item.subtitle}</div>
-        </div>
-        <div class="criterion-right">
-          <div class="criterion-score-preview" id="preview-${item.id}">—</div>
-          <div class="criterion-expand">▼</div>
-        </div>
-      </div>
-      <div class="criterion-body">
-        <div class="examples">${goodPills}${badPills}</div>
-        <div class="rating-row">
-          <span class="rating-label">${t('ratingLabel')}</span>
-          <div class="stars" id="stars-${item.id}">
-            ${[0,1,2,3,4].map(i=>`<div class="star" title="${currentLang==='en'?['Very Poor','Poor','Fair','Good','Excellent'][i]:['Péssimo','Ruim','Regular','Bom','Excelente'][i]}" onclick="setRating('${item.id}',${i})">${i}</div>`).join('')}
-          </div>
-          <div class="na-btn" id="na-${item.id}" onclick="setNA('${item.id}')">${t('naBtnLabel')}</div>
-        </div>
-        <textarea class="notes-area" placeholder="${t('notesPlaceholder')}" oninput="setNotes('${item.id}',this.value)">${r.notes}</textarea>
-      </div>`;
-    container.appendChild(div);
-    updatePreview(item.id);
-    if (r.score !== null) {
-      const stars = container.querySelectorAll(`#stars-${item.id} .star`);
-      stars.forEach((s,i) => s.classList.toggle(`sel-${r.score}`, i === r.score));
-    }
-    if (r.na) {
-      container.querySelector(`#na-${item.id}`)?.classList.add('selected');
-    }
-  });
-}
 
 // ─── MODO TURMA ───────────────────────────────────────────────────────────────
 let classSession = null; // { id, site, name, role: 'professor'|'student' }
@@ -1696,7 +1535,7 @@ async function submitStudentEvaluation() {
   } catch(e) {
     showToast(t('toastApiError'));
     btn.disabled = false;
-    btn.textContent = 'Enviar Avaliação';
+    btn.textContent = t('submitBtn');
   }
 }
 
@@ -1951,7 +1790,7 @@ async function buildClassDashboard() {
     </div>
     <div class="ai-loading" id="aiClassLoading">
       <div class="ai-spinner"></div>
-      <span>${t('aiClassLoading')}</span>
+      <span>${t('aiLoading')}</span>
     </div>
     <div class="ai-result" id="aiClassResult"></div>
     <div class="ai-error" id="aiClassError"></div>
@@ -2029,12 +1868,46 @@ function updateProgress() {
 
 // ─── CRITÉRIOS ────────────────────────────────────────────────────────────────
 function buildCriteria(framework) {
-  // Initialize ratings for all items
+  const container = document.getElementById(`criteria-${framework}`);
+  if (!container) return;
+  container.innerHTML = '';
+  const color = DATA[framework].color;
   DATA[framework].items.forEach(item => {
     ratings[item.id] = { score: null, na: false, notes: '' };
+    const L = itemL(item);
+    const goodPills = L.good.map(g => `<span class="example-pill">✓ ${g}</span>`).join('');
+    const badPills  = L.bad.map(b  => `<span class="example-pill bad-pill">✗ ${b}</span>`).join('');
+    const starLabels = currentLang === 'en'
+      ? ['Very Poor','Poor','Fair','Good','Excellent']
+      : ['Péssimo','Ruim','Regular','Bom','Excelente'];
+    const div = document.createElement('div');
+    div.className = 'criterion';
+    div.id = `crit-${item.id}`;
+    div.innerHTML = `
+      <div class="criterion-header" onclick="toggleCrit('${item.id}')">
+        <div class="criterion-num" style="color:${color};background:${color}22">${item.num}</div>
+        <div style="flex:1;min-width:0">
+          <div class="criterion-title">${L.title}</div>
+          <div class="criterion-subtitle">${L.subtitle}</div>
+        </div>
+        <div class="criterion-right">
+          <div class="criterion-score-preview" id="preview-${item.id}">—</div>
+          <div class="criterion-expand">▼</div>
+        </div>
+      </div>
+      <div class="criterion-body">
+        <div class="examples">${goodPills}${badPills}</div>
+        <div class="rating-row">
+          <span class="rating-label">${t('ratingLabel')}</span>
+          <div class="stars" id="stars-${item.id}">
+            ${[0,1,2,3,4].map(i=>`<div class="star" title="${starLabels[i]}" onclick="setRating('${item.id}',${i})">${i}</div>`).join('')}
+          </div>
+          <div class="na-btn" id="na-${item.id}" onclick="setNA('${item.id}')">${t('naBtnLabel')}</div>
+        </div>
+        <textarea class="notes-area" placeholder="${t('notesPlaceholder')}" oninput="setNotes('${item.id}',this.value)"></textarea>
+      </div>`;
+    container.appendChild(div);
   });
-  // Render using current language
-  rebuildCriteria(framework);
 }
 
 function toggleCrit(id) { document.getElementById(`crit-${id}`).classList.toggle('open'); }
