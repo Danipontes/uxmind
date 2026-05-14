@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>vanterior-Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA</title>
+<title>v1305-22h47-Avaliador UX/IHC — Profa. Dra. Danielle Pompeu — UEA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -966,23 +966,45 @@ function initClassMode() {
   const role = params.get('role');
 
   if (sessionId && role === 'student') {
-    // Modo aluno
+    // Modo aluno — tenta localStorage primeiro, senão usa dados embutidos na URL
     classSession = { id: sessionId, role: 'student' };
-    // Carregar site do sessionStorage compartilhado
-    const sessionData = getSessionData(sessionId);
+    let sessionData = getSessionData(sessionId);
+    if (!sessionData) {
+      // Dados da sessão vieram embutidos na URL (funciona em qualquer navegador)
+      const sdataRaw = params.get('sdata');
+      if (sdataRaw) {
+        try { sessionData = JSON.parse(decodeURIComponent(sdataRaw)); } catch(e) {}
+      }
+    }
     if (sessionData) {
       classSession.site = sessionData.site;
       classSession.name = sessionData.name;
       setupStudentMode();
+    } else {
+      // Fallback: mostrar modo aluno mesmo sem dados da sessão
+      setupStudentMode();
     }
   } else if (sessionId && role === 'professor') {
-    // Professor abrindo dashboard direto
+    // Professor abrindo dashboard direto (ou recebendo link de entrega de aluno)
     classSession = { id: sessionId, role: 'professor' };
     const sessionData = getSessionData(sessionId);
     if (sessionData) {
       classSession.site = sessionData.site;
       classSession.name = sessionData.name;
       setupProfessorMode();
+    }
+
+    // Importar submissão de aluno embutida na URL (link de entrega)
+    const submitRaw = params.get('submit');
+    if (submitRaw) {
+      try {
+        const submission = JSON.parse(decodeURIComponent(submitRaw));
+        saveSubmission(sessionId, submission);
+        showToast(`✅ Avaliação de ${submission.email} importada!`);
+        // Limpar o parâmetro da URL sem recarregar
+        const cleanUrl = `${window.location.pathname}?session=${sessionId}&role=professor`;
+        history.replaceState(null, '', cleanUrl);
+      } catch(e) { showToast('⚠️ Erro ao importar avaliação do link.'); }
     }
   }
 }
@@ -1090,12 +1112,38 @@ function submitStudentEvaluation() {
     ratings: JSON.parse(JSON.stringify(ratings))
   };
 
+  // Salva localmente (funciona se for o mesmo browser do professor)
   saveSubmission(classSession.id, submission);
+
+  // Gera link de entrega com dados embutidos na URL
+  const base = window.location.href.split('?')[0];
+  const submissionEncoded = encodeURIComponent(JSON.stringify(submission));
+  const deliveryLink = `${base}?session=${classSession.id}&role=professor&submit=${submissionEncoded}`;
 
   // UI feedback
   document.getElementById('submitForm').style.display = 'none';
-  document.getElementById('submitSuccess').style.display = 'flex';
+  const successEl = document.getElementById('submitSuccess');
+  successEl.style.display = 'flex';
+
+  // Mostrar link de entrega para copiar e enviar ao professor
+  const linkBox = document.createElement('div');
+  linkBox.style.cssText = 'margin-top:1rem;text-align:left;width:100%';
+  linkBox.innerHTML = `
+    <p style="font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem;">
+      📋 <strong>Copie este link e envie ao professor</strong> (caso ele não esteja no mesmo computador):
+    </p>
+    <div class="link-box" onclick="copyDeliveryLink(this)" title="Clique para copiar">${deliveryLink}</div>
+    <p class="copy-hint">👆 Clique no link para copiar</p>
+  `;
+  successEl.appendChild(linkBox);
+
   showToast('✅ Avaliação enviada!');
+}
+
+function copyDeliveryLink(el) {
+  navigator.clipboard.writeText(el.textContent).then(() => {
+    showToast('🔗 Link copiado! Envie ao professor.');
+  });
 }
 
 function setupProfessorMode() {
@@ -1131,9 +1179,10 @@ function createClassSession() {
 
   classSession = { id: sessionId, site, name, role: 'professor' };
 
-  // Gerar link de aluno
+  // Gerar link de aluno — dados da sessão embutidos na URL para funcionar em qualquer navegador
   const base = window.location.href.split('?')[0];
-  const studentLink = `${base}?session=${sessionId}&role=student`;
+  const sessionEncoded = encodeURIComponent(JSON.stringify(sessionData));
+  const studentLink = `${base}?session=${sessionId}&role=student&sdata=${sessionEncoded}`;
 
   document.getElementById('generatedLink').textContent = studentLink;
   document.getElementById('classStep1').style.display = 'none';
@@ -1155,7 +1204,9 @@ function copyGeneratedLink() {
 function copyStudentLink() {
   if (!classSession) return;
   const base = window.location.href.split('?')[0];
-  const studentLink = `${base}?session=${classSession.id}&role=student`;
+  const sessionData = getSessionData(classSession.id) || { id: classSession.id, site: classSession.site, name: classSession.name };
+  const sessionEncoded = encodeURIComponent(JSON.stringify(sessionData));
+  const studentLink = `${base}?session=${classSession.id}&role=student&sdata=${sessionEncoded}`;
   navigator.clipboard.writeText(studentLink).then(() => showToast('🔗 Link copiado!'));
 }
 
@@ -1926,5 +1977,3 @@ initClassMode();
 
 </body>
 </html>
-
-
