@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UXMind — Heuristic Evaluation Tool · Profa. Dra. Danielle Pompeu · UEA</title>
+<title>UXMind — Heuristic Evaluation Tool · Profa. Dra. Danielle Pompeu Noronha Pontes (v13/5/21h57) - · UEA</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -919,6 +919,12 @@
         <p class="copy-hint" id="copyHint">👆 Clique no link para copiar</p>
       </div>
 
+      <div class="modal-field" style="margin-top:0.75rem;">
+        <label style="color:var(--accent)">👩‍🏫 Seu link de professor (salve para acessar o dashboard depois)</label>
+        <div class="link-box" id="professorLink" onclick="copyProfessorLink()" style="border-color:rgba(124,106,247,0.4);color:var(--accent)"></div>
+        <p class="copy-hint">👆 Clique para copiar · Guarde este link para abrir o dashboard em outro momento</p>
+      </div>
+
       <div class="modal-btn-row">
         <button class="modal-btn modal-btn-secondary" onclick="closeClassModal()">Fechar</button>
         <button class="modal-btn modal-btn-primary" onclick="openClassDashboard()">📊 Ver dashboard da turma</button>
@@ -1015,11 +1021,11 @@ function initClassMode() {
     // Professor abrindo dashboard direto
     classSession = { id: sessionId, role: 'professor' };
     const sessionData = getSessionData(sessionId);
-    if (sessionData) {
-      classSession.site = sessionData.site;
-      classSession.name = sessionData.name;
-      setupProfessorMode();
-    }
+    // Usa localStorage se disponível; senão usa parâmetros da URL
+    classSession.site = (sessionData && sessionData.site) || decodeURIComponent(params.get('site') || '');
+    classSession.name = (sessionData && sessionData.name) || decodeURIComponent(params.get('name') || sessionId);
+    // setupProfessorMode sempre é chamada quando role=professor, independente do localStorage
+    setupProfessorMode();
   }
 }
 
@@ -1187,6 +1193,11 @@ function createClassSession() {
   document.getElementById('classStep1').style.display = 'none';
   document.getElementById('classStep2').style.display = 'block';
 
+  // Gerar e guardar link do professor (com site e name na URL)
+  const professorLink = `${base}?session=${sessionId}&role=professor&site=${encodeURIComponent(site)}&name=${encodeURIComponent(name)}`;
+  const profLinkEl = document.getElementById('professorLink');
+  if (profLinkEl) profLinkEl.textContent = professorLink;
+
   // Ativar barra do professor
   setupProfessorMode();
 }
@@ -1197,6 +1208,13 @@ function copyGeneratedLink() {
     document.getElementById('copyHint').textContent = '✅ Copiado!';
     setTimeout(() => { document.getElementById('copyHint').textContent = '👆 Clique no link para copiar'; }, 2000);
     showToast('🔗 Link copiado!');
+  });
+}
+
+function copyProfessorLink() {
+  const link = document.getElementById('professorLink').textContent;
+  navigator.clipboard.writeText(link).then(() => {
+    showToast('👩‍🏫 Link do professor copiado!');
   });
 }
 
